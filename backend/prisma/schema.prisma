@@ -1,0 +1,83 @@
+// Schema đã được duyệt ở Phase 1.
+// Chỉ 3 model: User, Vocabulary, UserVocabulary.
+// KHÔNG tự ý thêm bảng khác ở Phase 2.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  passwordHash String   @map("password_hash")
+  name         String
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  userVocabularies    UserVocabulary[]
+  createdVocabularies Vocabulary[]     @relation("VocabularyCreatedBy")
+
+  @@map("users")
+}
+
+model Vocabulary {
+  id             String   @id @default(uuid())
+  hanzi          String
+  pinyin         String
+  meaning        String
+  example        String?
+  examplePinyin  String?  @map("example_pinyin")
+  exampleMeaning String?  @map("example_meaning")
+
+  // Chừa chỗ cho tính năng "kho từ vựng cá nhân" ở giai đoạn sau.
+  // null  = từ vựng thuộc kho chung (system/shared vocabulary)
+  // khác null = từ vựng do chính user đó tạo riêng
+  //
+  // onDelete: SetNull -> nếu xoá user đã tạo ra từ này, từ vựng
+  // KHÔNG bị xoá theo (dữ liệu học tập chung không nên mất),
+  // chỉ mất liên kết "ai đã tạo ra nó".
+  createdByUserId String?  @map("created_by_user_id")
+  createdBy       User?    @relation("VocabularyCreatedBy", fields: [createdByUserId], references: [id], onDelete: SetNull)
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  userVocabularies UserVocabulary[]
+
+  @@index([hanzi])
+  @@index([pinyin])
+  @@index([createdByUserId])
+  @@map("vocabularies")
+}
+
+model UserVocabulary {
+  id           String @id @default(uuid())
+  userId       String @map("user_id")
+  vocabularyId String @map("vocabulary_id")
+
+  mastery      Int @default(0)
+  correctCount Int @default(0) @map("correct_count")
+  wrongCount   Int @default(0) @map("wrong_count")
+
+  // Field chuẩn bị cho Spaced Repetition (Phase sau) - CHƯA có thuật toán,
+  // chỉ lưu giá trị mặc định hợp lý ở Phase này.
+  interval   Int       @default(0) // số ngày tới lần ôn kế tiếp
+  lastReview DateTime? @map("last_review")
+  nextReview DateTime? @map("next_review")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  vocabulary Vocabulary @relation(fields: [vocabularyId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, vocabularyId])
+  @@index([userId])
+  @@index([nextReview])
+  @@map("user_vocabularies")
+}

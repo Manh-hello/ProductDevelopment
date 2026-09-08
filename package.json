@@ -1,0 +1,13 @@
+{
+  "name": "chinese-vocabulary-app",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Website học và ghi nhớ từ vựng tiếng Trung (monorepo: frontend + backend)",
+  "scripts": {
+    "dev:backend": "npm --prefix backend run dev",
+    "dev:frontend": "npm --prefix frontend run dev",
+    "install:all": "npm --prefix backend install && npm --prefix frontend install",
+    "typecheck:backend": "npm --prefix backend run typecheck",
+    "typecheck:frontend": "npm --prefix frontend run typecheck"
+  }
+}
