@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+
+<html lang="vi"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,400..700;1,400..700&amp;family=Plus+Jakarta+Sans:ital,wght@0,300..800;1,300..800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "on-primary": "#ffffff", "on-error": "#ffffff", "secondary-fixed": "#85f8c4", "tertiary-fixed": "#ffdcc3", "surface-container-highest": "#e3e2e0", "tertiary": "#703a00", "surface-tint": "#bb0f3a", "secondary-fixed-dim": "#68dba9", "inverse-surface": "#2f3130", "on-tertiary-container": "#ffd2b1", "on-primary-container": "#ffd0d2", "primary-fixed-dim": "#ffb2b7", "on-secondary-fixed": "#002114", "surface-container-high": "#e9e8e6", "outline": "#8f6f70", "on-secondary-fixed-variant": "#005137", "secondary": "#006c4a", "surface-container": "#efeeec", "on-error-container": "#93000a", "outline-variant": "#e3bdbf", "on-tertiary-fixed-variant": "#6e3900", "surface-variant": "#e3e2e0", "on-secondary-container": "#00714e", "on-primary-fixed-variant": "#920029", "on-secondary": "#ffffff", "inverse-primary": "#ffb2b7", "primary-fixed": "#ffdadb", "surface-dim": "#dadad8", "background": "#faf9f7", "tertiary-fixed-dim": "#ffb77d", "surface-container-lowest": "#ffffff", "on-surface": "#1a1c1b", "error-container": "#ffdad6", "on-surface-variant": "#5b4041", "error": "#ba1a1a", "primary-container": "#be123c", "tertiary-container": "#934e00", "primary": "#95002a", "on-background": "#1a1c1b", "surface-container-low": "#f4f3f1", "inverse-on-surface": "#f1f1ef", "on-tertiary-fixed": "#2f1500", "on-tertiary": "#ffffff", "surface": "#faf9f7", "secondary-container": "#82f5c1", "on-primary-fixed": "#40000d", "surface-bright": "#faf9f7" }, "borderRadius": { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, "spacing": { "gutter-sm": "1rem", "margin": "2rem", "margin-sm": "1rem", "space-lg": "1.5rem", "space-md": "1rem", "space-xl": "2.5rem", "space-sm": "0.5rem", "space-xs": "0.25rem", "gutter": "1.5rem" }, "fontFamily": { "headline-lg": [ "Plus Jakarta Sans" ], "label-sm": [ "Plus Jakarta Sans" ], "headline-md": [ "Plus Jakarta Sans" ], "display-character": [ "Noto Serif" ], "body-lg": [ "Plus Jakarta Sans" ], "headline-xl": [ "Noto Serif" ], "title-sm": [ "Plus Jakarta Sans" ], "body-md": [ "Plus Jakarta Sans" ], "body-sm": [ "Plus Jakarta Sans" ], "label-md": [ "Plus Jakarta Sans" ], "headline-xl-mobile": [ "Noto Serif" ], "display-character-mobile": [ "Noto Serif" ] }, "fontSize": { "headline-lg": [ "24px", { "lineHeight": "32px", "letterSpacing": "-0.015em", "fontWeight": "700" } ], "label-sm": [ "11px", { "lineHeight": "16px", "letterSpacing": "0.06em", "fontWeight": "700" } ], "headline-md": [ "20px", { "lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "600" } ], "display-character": [ "96px", { "lineHeight": "112px", "letterSpacing": "0px", "fontWeight": "600" } ], "body-lg": [ "18px", { "lineHeight": "28px", "letterSpacing": "0", "fontWeight": "400" } ], "headline-xl": [ "36px", { "lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "700" } ], "title-sm": [ "16px", { "lineHeight": "24px", "letterSpacing": "-0.005em", "fontWeight": "600" } ], "body-md": [ "15px", { "lineHeight": "24px", "letterSpacing": "0", "fontWeight": "400" } ], "body-sm": [ "13px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "400" } ], "label-md": [ "13px", { "lineHeight": "18px", "letterSpacing": "0.02em", "fontWeight": "600" } ], "headline-xl-mobile": [ "28px", { "lineHeight": "36px", "letterSpacing": "-0.01em", "fontWeight": "700" } ], "display-character-mobile": [ "64px", { "lineHeight": "76px", "letterSpacing": "0px", "fontWeight": "600" } ] } } } };</script></head><body class="bg-background font-body-md text-on-surface antialiased min-h-screen flex items-center justify-center p-space-md"><main class="w-full max-w-md mx-auto"><div class="flex flex-col w-full">
+<!-- AMBIENT GLOW BACKDROP LAYER -->
+<div class="relative w-full overflow-hidden">
+<div class="absolute -top-32 -left-20 w-96 h-96 rounded-full bg-primary/5 blur-3xl pointer-events-none"></div>
+<div class="absolute top-1/3 -right-24 w-80 h-80 rounded-full bg-tertiary/5 blur-3xl pointer-events-none"></div>
+<!-- HERO SECTION -->
+<section class="relative w-full pt-space-md pb-space-xl px-gutter-sm sm:px-gutter flex flex-col items-center text-center">
+<!-- Badge -->
+<div class="inline-flex items-center gap-space-xs px-3 py-1.5 rounded-full bg-primary-fixed text-on-primary-fixed shadow-sm mb-space-md">
+<span class="material-symbols-outlined text-[16px] text-primary" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+<span class="font-label-sm tracking-wider uppercase">Active Recall Đa Tầng &amp; Thuật Toán SRS Anki/SM-2</span>
+</div>
+<!-- Main Headline -->
+<h1 class="font-headline-xl text-headline-xl sm:text-headline-xl text-on-surface max-w-3xl font-extrabold tracking-tight mb-space-md">
+        Học Chữ Hán Sâu Sắc, Ghi Nhớ Bền Vững &amp; Phản Xạ Tự Nhiên.
+      </h1>
+<!-- Subheadline -->
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl mb-space-lg leading-relaxed">
+        Không còn học vẹt thụ động. HanziSRS kết hợp 6 chiều kích hoạt nơ-ron (Mặt chữ - Pinyin - Thanh điệu - Nghe - Viết - Ngữ cảnh) cùng thuật toán phân bổ lặp lại ngắt quãng khoa học.
+      </p>
+<!-- CTAs -->
+<div class="flex flex-col sm:flex-row items-center gap-space-md w-full sm:w-auto mb-space-xl">
+<a class="w-full sm:w-auto inline-flex items-center justify-center gap-space-xs px-space-lg py-3.5 rounded-lg bg-primary-container text-on-primary font-title-sm shadow-md hover:bg-primary transition-all duration-200" href="#demo-section">
+<span>Bắt Đầu Luyện Tập Miễn Phí</span>
+<span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</a>
+<a class="w-full sm:w-auto inline-flex items-center justify-center gap-space-xs px-space-lg py-3.5 rounded-lg bg-surface-container-high text-on-surface font-title-sm hover:bg-surface-container-highest transition-all duration-200 shadow-sm" href="#six-dimensions">
+<span class="material-symbols-outlined text-[18px] text-primary">play_circle</span>
+<span>Xem Demo Phương Pháp 6D</span>
+</a>
+</div>
+<!-- Social Proof Metrics -->
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-space-sm w-full max-w-3xl">
+<div class="flex items-center justify-center gap-space-xs py-2.5 px-4 rounded-xl bg-surface-container-low shadow-sm">
+<span class="material-symbols-outlined text-primary text-[20px]" style="font-variation-settings: 'FILL' 1;">verified</span>
+<span class="font-label-md text-on-surface font-semibold">15,000+ Học viên HSK tin dùng</span>
+</div>
+<div class="flex items-center justify-center gap-space-xs py-2.5 px-4 rounded-xl bg-surface-container-low shadow-sm">
+<span class="material-symbols-outlined text-secondary text-[20px]" style="font-variation-settings: 'FILL' 1;">insights</span>
+<span class="font-label-md text-on-surface font-semibold">Tỷ lệ nhớ dài hạn 94.2%</span>
+</div>
+<div class="flex items-center justify-center gap-space-xs py-2.5 px-4 rounded-xl bg-surface-container-low shadow-sm">
+<span class="material-symbols-outlined text-tertiary text-[20px]" style="font-variation-settings: 'FILL' 1;">menu_book</span>
+<span class="font-label-md text-on-surface font-semibold">Trọn bộ HSK 1 - 9 mới</span>
+</div>
+</div>
+</section>
+<!-- INTERACTIVE SHOWCASE CARD (Hero Centerpiece) -->
+<section class="w-full px-gutter-sm sm:px-gutter pb-space-xl flex justify-center" id="demo-section">
+<div class="w-full max-w-xl bg-surface-container-lowest rounded-2xl p-space-md sm:p-space-lg shadow-xl relative overflow-hidden transition-all duration-300">
+<!-- Top Metadata Bar -->
+<div class="flex items-center justify-between pb-space-sm mb-space-sm">
+<div class="flex items-center gap-space-xs">
+<span class="px-2.5 py-1 rounded-full bg-primary-fixed text-on-primary-fixed font-label-sm font-bold">HSK 1 · ID #084</span>
+<span class="px-2.5 py-1 rounded-full bg-surface-container text-on-surface-variant font-label-sm">Stage: Guru II</span>
+</div>
+<div class="flex items-center gap-space-xs">
+<button class="p-2 rounded-full bg-surface-container hover:bg-surface-container-high transition-colors flex items-center justify-center text-primary" id="audio-toggle-btn" title="Phát âm chuẩn Bắc Kinh">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">volume_up</span>
+</button>
+<div class="flex items-center gap-0.5 px-2 py-1 rounded-full bg-amber-50 text-amber-800">
+<span class="material-symbols-outlined text-[16px] text-amber-600" style="font-variation-settings: 'FILL' 1;">local_fire_department</span>
+<span class="font-label-sm font-bold">Streak 18d</span>
+</div>
+</div>
+</div>
+<!-- Hanzi Center Stage -->
+<div class="flex flex-col items-center justify-center py-space-md bg-surface-container-low rounded-xl relative">
+<span class="font-display-character text-display-character text-on-surface tracking-normal select-none">老师</span>
+<!-- Waveform Visualizer -->
+<div class="flex items-center gap-1 mt-space-sm h-6">
+<div class="w-1 h-3 bg-primary rounded-full animate-pulse"></div>
+<div class="w-1 h-6 bg-primary-container rounded-full animate-pulse"></div>
+<div class="w-1 h-4 bg-primary rounded-full"></div>
+<div class="w-1 h-5 bg-primary-container rounded-full animate-pulse"></div>
+<div class="w-1 h-2 bg-primary rounded-full"></div>
+<span class="font-title-sm text-primary font-bold ml-2">lǎoshī</span>
+</div>
+<div class="flex items-center gap-space-xs mt-space-sm">
+<span class="px-2.5 py-0.5 rounded-full bg-surface-container-highest text-on-surface-variant font-label-sm">6 nét bút</span>
+<span class="px-2.5 py-0.5 rounded-full bg-secondary-container text-on-secondary-container font-label-sm">Thanh 3 + Thanh 1</span>
+</div>
+</div>
+<!-- Radical & Flip Interaction -->
+<div class="mt-space-md p-space-sm bg-surface-container-low rounded-xl">
+<div class="flex items-center justify-between">
+<span class="font-label-md font-bold text-on-surface">Mnemonic &amp; Chiết tự nhớ nhanh:</span>
+<button class="px-3 py-1 rounded-md bg-primary-container text-on-primary font-label-sm hover:bg-primary transition-colors flex items-center gap-1" id="flip-mnemonic-btn">
+<span class="material-symbols-outlined text-[14px]">psychology</span>
+<span id="mnemonic-btn-text">Xem Phân Tích</span>
+</button>
+</div>
+<div class="mt-space-sm text-on-surface-variant font-body-sm hidden leading-relaxed bg-surface-container-lowest p-3 rounded-lg" id="mnemonic-content">
+<p class="font-semibold text-on-surface mb-1">Cấu thành: Bộ Lão (老 - Người già có kinh nghiệm) + Bộ Cân (巾 - Khăn/Trí thức).</p>
+<p>Mẹo nhớ: Người thầy là bậc trưởng bối đức cao vọng trọng (<span class="text-primary font-bold">老</span>), mang khăn gấm truyền đạt tri thức và lễ nghĩa cho hậu bối (<span class="text-primary font-bold">师</span>).</p>
+</div>
+</div>
+<!-- 6-Dimension Mini Bar Gauge -->
+<div class="mt-space-md pt-space-sm">
+<div class="flex justify-between items-center mb-1.5">
+<span class="font-label-sm text-on-surface-variant font-semibold">Chỉ số hoàn thiện 6 Chiều</span>
+<span class="font-label-sm text-secondary font-bold">83.3% Hoàn hảo</span>
+</div>
+<div class="w-full h-2 rounded-full bg-surface-container-highest overflow-hidden flex">
+<div class="h-full bg-secondary w-5/6 rounded-full transition-all duration-500"></div>
+</div>
+<div class="grid grid-cols-6 text-center mt-2 text-[10px] text-on-surface-variant font-semibold">
+<span>Mặt chữ</span>
+<span>Nghĩa</span>
+<span>Pinyin</span>
+<span>Âm thanh</span>
+<span>Nét bút</span>
+<span>Ngữ cảnh</span>
+</div>
+</div>
+</div>
+</section>
+<!-- SECTION: 6 CHIỀU GHI NHỚ ĐA TẦNG -->
+<section class="w-full px-gutter-sm sm:px-gutter py-space-xl" id="six-dimensions">
+<div class="text-center max-w-2xl mx-auto mb-space-xl">
+<span class="font-label-sm uppercase tracking-widest text-primary font-bold">Phương Pháp Khoa Học Thần Kinh</span>
+<h2 class="font-headline-lg text-headline-lg text-on-surface mt-1 font-bold">6 Chiều Ghi Nhớ Đa Tầng (6D Encoding)</h2>
+<p class="font-body-md text-on-surface-variant mt-2">
+          Một ký tự chữ Hán chỉ thực sự trở thành phản xạ vô điều kiện khi não bộ kích hoạt đồng thời cả 6 đường dẫn nơ-ron nhận thức.
+        </p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-space-md max-w-5xl mx-auto">
+<!-- 1. Hanzi -> Nghia -->
+<div class="bg-surface-container-lowest p-space-md rounded-2xl shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+<div>
+<div class="w-10 h-10 rounded-xl bg-primary-fixed flex items-center justify-center text-primary mb-space-sm">
+<span class="material-symbols-outlined text-[24px]">visibility</span>
+</div>
+<span class="px-2 py-0.5 rounded-full bg-surface-container text-on-surface-variant font-label-sm">Chiều 01</span>
+<h3 class="font-title-sm text-on-surface font-bold mt-2">Hán Tự → Nghĩa Thực</h3>
+<p class="font-body-sm text-on-surface-variant mt-1 leading-relaxed">
+              Nhận diện thị giác tức thì. Nhìn ký tự Hán giải mã chính xác hàm nghĩa biểu tượng không cần dịch thầm qua tiếng mẹ đẻ.
+            </p>
+</div>
+<div class="mt-space-md p-2.5 bg-surface-container-low rounded-lg flex items-center justify-between text-on-surface font-body-sm">
+<span class="font-bold text-headline-md font-headline-md">明</span>
+<span class="text-on-surface-variant">→ Nhật + Nguyệt = Sáng sủa</span>
+</div>
+</div>
+<!-- 2. Nghia -> Hanzi -->
+<div class="bg-surface-container-lowest p-space-md rounded-2xl shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+<div>
+<div class="w-10 h-10 rounded-xl bg-secondary-fixed flex items-center justify-center text-secondary mb-space-sm">
+<span class="material-symbols-outlined text-[24px]">swap_horiz</span>
+</div>
+<span class="px-2 py-0.5 rounded-full bg-surface-container text-on-surface-variant font-label-sm">Chiều 02</span>
+<h3 class="font-title-sm text-on-surface font-bold mt-2">Nghĩa → Hán Tự (Recall Đảo)</h3>
+<p class="font-body-sm text-on-surface-variant mt-1 leading-relaxed">
+              Kích hoạt não bộ sản sinh lại chữ Hán khi chỉ có ý niệm ngữ nghĩa. Đánh bại hoàn toàn chứng "chỉ đọc được mà không nhớ để viết".
+            </p>
+</div>
+<div class="mt-space-md p-2.5 bg-surface-container-low rounded-lg flex items-center justify-between text-on-surface font-body-sm">
+<span class="text-on-surface-variant">Ý niệm: "Hạnh phúc"</span>
+<span class="font-bold text-headline-md text-primary font-headline-md">幸福</span>
+</div>
+</div>
+<!-- 3. Pinyin & Bien dieu -->
+<div class="bg-surface-container-lowest p-space-md rounded-2xl shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+<div>
+<div class="w-10 h-10 rounded-xl bg-tertiary-fixed flex items-center justify-center text-tertiary mb-space-sm">
+<span class="material-symbols-outlined text-[24px]">graphic_eq</span>
+</div>
+<span class="px-2 py-0.5 rounded-full bg-surface-container text-on-surface-variant font-label-sm">Chiều 03</span>
+<h3 class="font-title-sm text-on-surface font-bold mt-2">Pinyin &amp; Thanh Điệu</h3>
+<p class="font-body-sm text-on-surface-variant mt-1 leading-relaxed">
+              Biểu đồ cao độ ngữ điệu trực quan (Tone contours). Khắc sâu quy tắc biến điệu thanh 3 và thanh nhẹ tự nhiên trong đàm thoại.
+            </p>
+</div>
+<div class="mt-space-md p-2.5 bg-surface-container-low rounded-lg flex items-center justify-between text-on-surface font-body-sm">
+<span class="text-on-surface-variant">你好 (nǐ + hǎo)</span>
+<span class="font-bold text-tertiary font-title-sm">níhǎo (3+3→2+3)</span>
+</div>
+</div>
+<!-- 4. Audio Ban Xu -->
+<div class="bg-surface-container-lowest p-space-md rounded-2xl shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+<div>
+<div class="w-10 h-10 rounded-xl bg-primary-fixed flex items-center justify-center text-primary mb-space-sm">
+<span class="material-symbols-outlined text-[24px]">hearing</span>
+</div>
+<span class="px-2 py-0.5 rounded-full bg-surface-container text-on-surface-variant font-label-sm">Chiều 04</span>
+<h3 class="font-title-sm text-on-surface font-bold mt-2">Audio Nhận Diện Chuẩn Bản Xứ</h3>
+<p class="font-body-sm text-on-surface-variant mt-1 leading-relaxed">
+              Âm thanh thu âm phòng thu chuẩn phổ thông Standard Mandarin. Luyện tai phân biệt phụ âm đầu uốn lưỡi (zh/ch/sh vs z/c/s).
+            </p>
+</div>
+<div class="mt-space-md p-2.5 bg-surface-container-low rounded-lg flex items-center justify-between text-on-surface font-body-sm">
+<span class="flex items-center gap-1 text-on-surface-variant"><span class="material-symbols-outlined text-[16px] text-primary">campaign</span> 44.1kHz HD</span>
+<span class="font-bold text-on-surface font-title-sm">Cấp độ: Bản Ngữ</span>
+</div>
+</div>
+<!-- 5. Thuan But -->
+<div class="bg-surface-container-lowest p-space-md rounded-2xl shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+<div>
+<div class="w-10 h-10 rounded-xl bg-secondary-fixed flex items-center justify-center text-secondary mb-space-sm">
+<span class="material-symbols-outlined text-[24px]">draw</span>
+</div>
+<span class="px-2 py-0.5 rounded-full bg-surface-container text-on-surface-variant font-label-sm">Chiều 05</span>
+<h3 class="font-title-sm text-on-surface font-bold mt-2">Viết &amp; Quy Tắc Thuận Bút</h3>
+<p class="font-body-sm text-on-surface-variant mt-1 leading-relaxed">
+              Xây dựng trí nhớ cơ bắp ngón tay (Kinesthetic memory). Viết đúng thứ tự nét: từ trên xuống dưới, từ trái sang phải, trong trước ngoài sau.
+            </p>
+</div>
+<div class="mt-space-md p-2.5 bg-surface-container-low rounded-lg flex items-center justify-between text-on-surface font-body-sm">
+<span class="text-on-surface-variant">Bút thuận: 横 竖 撇 捺</span>
+<span class="font-bold text-secondary font-title-sm">100% Chuẩn</span>
+</div>
+</div>
+<!-- 6. Ngu Canh AI -->
+<div class="bg-surface-container-lowest p-space-md rounded-2xl shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+<div>
+<div class="w-10 h-10 rounded-xl bg-tertiary-fixed flex items-center justify-center text-tertiary mb-space-sm">
+<span class="material-symbols-outlined text-[24px]">auto_stories</span>
+</div>
+<span class="px-2 py-0.5 rounded-full bg-surface-container text-on-surface-variant font-label-sm">Chiều 06</span>
+<h3 class="font-title-sm text-on-surface font-bold mt-2">Ngữ Cảnh &amp; Ứng Dụng Thực Tế</h3>
+<p class="font-body-sm text-on-surface-variant mt-1 leading-relaxed">
+              Không học từ đơn lẻ. Ghép từ vào các mẫu câu giao tiếp đời sống và thương mại thực tế với phân tích ngữ pháp tức thời.
+            </p>
+</div>
+<div class="mt-space-md p-2.5 bg-surface-container-low rounded-lg flex items-center justify-between text-on-surface font-body-sm">
+<span class="text-on-surface-variant">Cặp cụm từ (Collocation)</span>
+<span class="font-bold text-on-surface font-title-sm">HSK Dynamic Corpus</span>
+</div>
+</div>
+</div>
+</section>
+<!-- SECTION: DYNAMIC MIXING & SRS COMPARISON -->
+<section class="w-full px-gutter-sm sm:px-gutter py-space-xl bg-surface-container-low">
+<div class="max-w-5xl mx-auto">
+<div class="text-center max-w-2xl mx-auto mb-space-xl">
+<span class="font-label-sm uppercase tracking-widest text-primary font-bold">Cỗ Máy Thuật Toán Độc Quyền</span>
+<h2 class="font-headline-lg text-headline-lg text-on-surface mt-1 font-bold">Cơ Chế Dynamic Mixing &amp; Spaced Repetition</h2>
+<p class="font-body-md text-on-surface-variant mt-2">
+            Mỗi phiên học 15 phút được tự động tính toán với tỷ lệ vàng, đảm bảo bạn không bị quá tải từ mới cũng không nhàm chán khi ôn luyện.
+          </p>
+</div>
+<!-- Mixing Ratio Bar Widget -->
+<div class="bg-surface-container-lowest p-space-lg rounded-2xl shadow-md mb-space-xl">
+<h3 class="font-title-sm text-on-surface font-bold mb-space-sm">Tỷ Lệ Phân Bổ Khoa Học Cho Mỗi Phiên Ôn (Smart Session Split):</h3>
+<div class="w-full h-8 rounded-xl overflow-hidden flex shadow-inner">
+<div class="h-full bg-primary flex items-center justify-center text-on-primary font-label-sm font-bold" style="width: 20%;">20% Mới</div>
+<div class="h-full bg-secondary flex items-center justify-center text-on-secondary font-label-sm font-bold" style="width: 50%;">50% SRS Đến Hạn</div>
+<div class="h-full bg-tertiary-container flex items-center justify-center text-on-tertiary-container font-label-sm font-bold" style="width: 30%;">30% Sửa Lỗi Sai</div>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-space-sm mt-space-md text-on-surface-variant font-body-sm">
+<div class="flex items-center gap-2">
+<span class="w-3 h-3 rounded-full bg-primary inline-block"></span>
+<span><strong>20% Từ mới:</strong> Nạp từ vựng mới theo đúng giới hạn nhận thức ngắn hạn.</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="w-3 h-3 rounded-full bg-secondary inline-block"></span>
+<span><strong>50% SRS Đến hạn:</strong> Ôn đúng thời điểm chuẩn bị quên theo Ebbinghaus.</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="w-3 h-3 rounded-full bg-tertiary-container inline-block"></span>
+<span><strong>30% Lỗi sai cũ:</strong> Đảo chiều câu hỏi để củng cố nơ-ron còn yếu.</span>
+</div>
+</div>
+</div>
+<!-- Comparison Cards: Traditional vs HanziSRS -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-space-md">
+<!-- Traditional Card -->
+<div class="bg-surface-container-lowest p-space-lg rounded-2xl shadow-sm opacity-80">
+<div class="flex items-center gap-space-xs mb-space-sm">
+<span class="material-symbols-outlined text-error text-[24px]">cancel</span>
+<h4 class="font-title-sm text-on-surface font-bold">Flashcard Truyền Thống</h4>
+</div>
+<ul class="space-y-space-xs font-body-sm text-on-surface-variant">
+<li class="flex items-start gap-2">
+<span class="text-error font-bold">✕</span>
+<span>Lật mặt trước xem mặt sau một cách thụ động, tạo ảo tưởng "đã thuộc bài".</span>
+</li>
+<li class="flex items-start gap-2">
+<span class="text-error font-bold">✕</span>
+<span>Chỉ nhớ mặt chữ đơn độc, không thể nghe hiểu khi người bản xứ nói nhanh.</span>
+</li>
+<li class="flex items-start gap-2">
+<span class="text-error font-bold">✕</span>
+<span>Ôn luyện hỗn loạn, từ dễ ôn lại quá nhiều lần gây lãng phí thời gian.</span>
+</li>
+<li class="flex items-start gap-2">
+<span class="text-error font-bold">✕</span>
+<span>Tỷ lệ bỏ cuộc sau 3 tuần lên đến hơn 82%.</span>
+</li>
+</ul>
+</div>
+<!-- HanziSRS Card -->
+<div class="bg-surface-container-lowest p-space-lg rounded-2xl shadow-md relative overflow-hidden">
+<div class="absolute top-0 right-0 px-3 py-1 bg-primary text-on-primary font-label-sm font-bold rounded-bl-xl">VƯỢT TRỘI</div>
+<div class="flex items-center gap-space-xs mb-space-sm">
+<span class="material-symbols-outlined text-secondary text-[24px]" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<h4 class="font-title-sm text-on-surface font-bold">Phương Pháp HanziSRS 6D</h4>
+</div>
+<ul class="space-y-space-xs font-body-sm text-on-surface">
+<li class="flex items-start gap-2">
+<span class="text-secondary font-bold">✓</span>
+<span>Active recall ép nơ-ron phải truy hồi chủ động từ kho ký ức dài hạn.</span>
+</li>
+<li class="flex items-start gap-2">
+<span class="text-secondary font-bold">✓</span>
+<span>Kích hoạt đồng điệu cả thính giác, cơ ngón tay và cấu trúc chiết tự.</span>
+</li>
+<li class="flex items-start gap-2">
+<span class="text-secondary font-bold">✓</span>
+<span>Thuật toán SM-2 giãn cách chính xác theo độ khó từng nét ký tự.</span>
+</li>
+<li class="flex items-start gap-2">
+<span class="text-secondary font-bold">✓</span>
+<span>Tiết kiệm 65% thời gian để cán mốc từ vựng HSK 4 - HSK 6.</span>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</section>
+<!-- SECTION: INTERACTIVE HSK CALCULATOR -->
+<section class="w-full px-gutter-sm sm:px-gutter py-space-xl">
+<div class="max-w-2xl mx-auto bg-surface-container-lowest p-space-md sm:p-space-lg rounded-2xl shadow-lg">
+<div class="text-center mb-space-md">
+<span class="font-label-sm uppercase tracking-widest text-primary font-bold">Lộ Trình Cá Nhân Hóa</span>
+<h2 class="font-headline-md text-headline-md text-on-surface mt-1 font-bold">Thiết Lập Mục Tiêu Chữ Hán Của Bạn</h2>
+<p class="font-body-sm text-on-surface-variant mt-1">Tính toán chính xác số ngày cần học với 15 phút mỗi ngày theo thuật toán HanziSRS.</p>
+</div>
+<!-- HSK Range Slider -->
+<div class="mb-space-lg">
+<div class="flex justify-between items-center mb-2">
+<span class="font-title-sm text-on-surface font-semibold">Cấp độ mục tiêu:</span>
+<span class="font-title-sm font-bold text-primary" id="hsk-target-label">HSK 3 (600 Từ Vựng)</span>
+</div>
+<input class="w-full h-2 bg-surface-container-highest rounded-lg appearance-none cursor-pointer accent-primary" id="hsk-slider" max="4" min="1" step="1" type="range" value="3"/>
+<div class="flex justify-between text-[11px] font-bold text-on-surface-variant mt-1.5 px-1">
+<span>HSK 1 (150 từ)</span>
+<span>HSK 2 (300 từ)</span>
+<span>HSK 3 (600 từ)</span>
+<span>HSK 4 (1200 từ)</span>
+</div>
+</div>
+<!-- Results Output Card -->
+<div class="grid grid-cols-2 gap-space-sm p-space-sm bg-surface-container-low rounded-xl text-center">
+<div>
+<span class="font-label-sm text-on-surface-variant">Thời gian dự kiến</span>
+<div class="font-headline-lg text-primary font-bold mt-0.5" id="calc-days">40 Ngày</div>
+<span class="text-[11px] text-on-surface-variant">Chỉ 15 phút/ngày</span>
+</div>
+<div>
+<span class="font-label-sm text-on-surface-variant">Khả năng ghi nhớ</span>
+<div class="font-headline-lg text-secondary font-bold mt-0.5">95.4%</div>
+<span class="text-[11px] text-on-surface-variant">Trí nhớ dài hạn bền vững</span>
+</div>
+</div>
+<div class="mt-space-md text-center">
+<button class="w-full py-3 rounded-lg bg-primary-container text-on-primary font-title-sm hover:bg-primary shadow-sm transition-colors">
+            Kích Hoạt Lộ Trình Này Ngay
+          </button>
+</div>
+</div>
+</section>
+<!-- SECTION: TESTIMONIALS & SCHOLARLY ENDORSEMENTS -->
+<section class="w-full px-gutter-sm sm:px-gutter py-space-xl bg-surface-container-low">
+<div class="max-w-5xl mx-auto">
+<div class="text-center max-w-xl mx-auto mb-space-xl">
+<span class="font-label-sm uppercase tracking-widest text-primary font-bold">Cảm Nhận Thực Tế</span>
+<h2 class="font-headline-lg text-headline-lg text-on-surface mt-1 font-bold">Đồng Hành Cùng 15,000+ Người Học</h2>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-space-md">
+<!-- Card 1 -->
+<div class="bg-surface-container-lowest p-space-md rounded-xl shadow-sm flex flex-col justify-between">
+<div>
+<div class="flex items-center text-amber-500 mb-space-sm">
+<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+<p class="font-body-sm text-on-surface leading-relaxed">
+                "Tôi từng mất 2 năm chật vật với HSK 4 vì cứ học trước quên sau. Nhờ cơ chế 6D của HanziSRS, tôi thi đỗ HSK 5 với 268 điểm chỉ sau 5 tháng luyện tập đều đặn mỗi ngày."
+              </p>
+</div>
+<div class="flex items-center gap-space-xs mt-space-md pt-space-xs">
+<div class="w-9 h-9 rounded-full bg-primary-fixed text-primary flex items-center justify-center font-bold text-sm">
+                TL
+              </div>
+<div>
+<h4 class="font-title-sm text-on-surface font-bold text-sm">Trần Thùy Linh</h4>
+<span class="text-[11px] text-on-surface-variant block">Du học sinh ĐH Vũ Hán</span>
+</div>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="bg-surface-container-lowest p-space-md rounded-xl shadow-sm flex flex-col justify-between">
+<div>
+<div class="flex items-center text-amber-500 mb-space-sm">
+<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+<p class="font-body-sm text-on-surface leading-relaxed">
+                "Là giảng viên ngôn ngữ Trung, tôi đánh giá cực cao cách phân tách chiết tự bộ thủ kết hợp thuật toán ngắt quãng. Sinh viên của tôi nhớ được cả thứ tự thuận bút lẫn thanh điệu."
+              </p>
+</div>
+<div class="flex items-center gap-space-xs mt-space-md pt-space-xs">
+<div class="w-9 h-9 rounded-full bg-secondary-fixed text-secondary flex items-center justify-center font-bold text-sm">
+                NH
+              </div>
+<div>
+<h4 class="font-title-sm text-on-surface font-bold text-sm">ThS. Nguyễn Hoàng Nam</h4>
+<span class="text-[11px] text-on-surface-variant block">Giảng viên Khoa Tiếng Trung</span>
+</div>
+</div>
+</div>
+<!-- Card 3 -->
+<div class="bg-surface-container-lowest p-space-md rounded-xl shadow-sm flex flex-col justify-between">
+<div>
+<div class="flex items-center text-amber-500 mb-space-sm">
+<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+<p class="font-body-sm text-on-surface leading-relaxed">
+                "Tôi đi làm bận rộn chỉ tranh thủ được 15 phút giờ nghỉ trưa. Tính năng Dynamic mixing biết đúng lúc nào cần nhắc lại từ khó, không còn cảm giác hoang mang khi học."
+              </p>
+</div>
+<div class="flex items-center gap-space-xs mt-space-md pt-space-xs">
+<div class="w-9 h-9 rounded-full bg-tertiary-fixed text-tertiary flex items-center justify-center font-bold text-sm">
+                DQ
+              </div>
+<div>
+<h4 class="font-title-sm text-on-surface font-bold text-sm">Đặng Quốc Huy</h4>
+<span class="text-[11px] text-on-surface-variant block">Chuyên viên Xuất nhập khẩu</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- FOOTER BANNER CTA -->
+<section class="w-full px-gutter-sm sm:px-gutter py-space-xl">
+<div class="max-w-4xl mx-auto rounded-3xl bg-primary-container text-on-primary p-space-lg sm:p-space-xl text-center shadow-xl relative overflow-hidden">
+<div class="absolute -right-12 -bottom-12 font-headline-xl text-[140px] text-on-primary/10 select-none pointer-events-none font-bold">
+          汉字
+        </div>
+<span class="font-label-sm uppercase tracking-widest text-primary-fixed block mb-space-xs">Khởi Đầu Thông Minh</span>
+<h2 class="font-headline-xl text-headline-xl sm:text-headline-xl font-bold mb-space-sm max-w-2xl mx-auto text-on-primary">
+          Sẵn sàng chinh phục chữ Hán cùng HanziSRS?
+        </h2>
+<p class="font-body-md text-primary-fixed mb-space-lg max-w-xl mx-auto">
+          Tạo kho từ vựng đầu tiên của bạn ngay hôm nay. Trải nghiệm trọn vẹn sức mạnh của thuật toán Spaced Repetition 6 chiều.
+        </p>
+<div class="flex flex-col sm:flex-row items-center justify-center gap-space-sm">
+<button class="w-full sm:w-auto px-space-xl py-3.5 rounded-lg bg-surface-container-lowest text-primary font-title-sm shadow-md hover:bg-surface-container-low transition-all">
+            Bắt Đầu Ngay (Hoàn Toàn Miễn Phí)
+          </button>
+</div>
+<p class="font-label-sm text-primary-fixed/80 mt-space-sm text-[12px]">Không cần thẻ tín dụng · Hỗ trợ đồng bộ trên Web &amp; Mobile</p>
+</div>
+</section>
+</div>
+</div>
+<script>
+  // INTERACTIVE BEHAVIORS
+  document.addEventListener('DOMContentLoaded', function() {
+    // 1. Mnemonic Reveal Toggle
+    const flipBtn = document.getElementById('flip-mnemonic-btn');
+    const mnemonicContent = document.getElementById('mnemonic-content');
+    const btnText = document.getElementById('mnemonic-btn-text');
+
+    if (flipBtn && mnemonicContent) {
+      flipBtn.addEventListener('click', function() {
+        const isHidden = mnemonicContent.classList.contains('hidden');
+        if (isHidden) {
+          mnemonicContent.classList.remove('hidden');
+          btnText.textContent = 'Ẩn Chiết Tự';
+        } else {
+          mnemonicContent.classList.add('hidden');
+          btnText.textContent = 'Xem Phân Tích';
+        }
+      });
+    }
+
+    // 2. Audio Mock Interaction
+    const audioBtn = document.getElementById('audio-toggle-btn');
+    if (audioBtn) {
+      audioBtn.addEventListener('click', function() {
+        audioBtn.classList.add('scale-95');
+        setTimeout(() => audioBtn.classList.remove('scale-95'), 150);
+      });
+    }
+
+    // 3. Dynamic HSK Calculator Slider
+    const hskSlider = document.getElementById('hsk-slider');
+    const hskLabel = document.getElementById('hsk-target-label');
+    const calcDays = document.getElementById('calc-days');
+
+    const hskData = {
+      '1': { label: 'HSK 1 (150 Từ Vựng)', days: '10 Ngày' },
+      '2': { label: 'HSK 2 (300 Từ Vựng)', days: '20 Ngày' },
+      '3': { label: 'HSK 3 (600 Từ Vựng)', days: '40 Ngày' },
+      '4': { label: 'HSK 4 (1200 Từ Vựng)', days: '75 Ngày' }
+    };
+
+    if (hskSlider && hskLabel && calcDays) {
+      hskSlider.addEventListener('input', function(e) {
+        const val = e.target.value;
+        if (hskData[val]) {
+          hskLabel.textContent = hskData[val].label;
+          calcDays.textContent = hskData[val].days;
+        }
+      });
+    }
+  });
+</script></main></body></html>

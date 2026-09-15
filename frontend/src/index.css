@@ -1,1 +1,94 @@
 @import "tailwindcss";
+
+@theme {
+  /* ---- Color tokens ---- */
+  --color-primary-50: #fdf3ee;
+  --color-primary-100: #fbe3d6;
+  --color-primary-200: #f6c4ac;
+  --color-primary-300: #f09d78;
+  --color-primary-400: #ec7f52;
+  --color-primary-500: #e8672e;
+  --color-primary-600: #d15422;
+  --color-primary-700: #ad421c;
+  --color-primary-800: #8a3519;
+  --color-primary-900: #702c17;
+
+  --color-navy-50: #f2f5f8;
+  --color-navy-100: #e1e8ef;
+  --color-navy-200: #c1d0dd;
+  --color-navy-300: #93abc1;
+  --color-navy-400: #5f7f9d;
+  --color-navy-500: #3f6180;
+  --color-navy-600: #2c4a67;
+  --color-navy-700: #1e3a5f;
+  --color-navy-800: #1a2e46;
+  --color-navy-900: #17263a;
+
+  --color-ink: #23262e;
+  --color-ink-soft: #565b66;
+  --color-ink-faint: #8a8f99;
+
+  --color-bg: #faf7f3;
+  --color-bg-card: #ffffff;
+  --color-border: #ece6de;
+
+  --color-success: #2f9e63;
+  --color-success-bg: #eaf7f0;
+  --color-warning: #c8862a;
+  --color-warning-bg: #fbf1e2;
+  --color-error: #d6493d;
+  --color-error-bg: #fceceb;
+
+  /* ---- Type ---- */
+  --font-sans: "Plus Jakarta Sans", "Segoe UI", system-ui, sans-serif;
+  --font-hanzi: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+
+  /* ---- Radius ---- */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 18px;
+  --radius-xl: 24px;
+
+  /* ---- Shadow ---- */
+  --shadow-card: 0 1px 2px rgba(35, 38, 46, 0.04), 0 8px 24px -12px rgba(35, 38, 46, 0.10);
+  --shadow-card-hover: 0 2px 4px rgba(35, 38, 46, 0.06), 0 16px 32px -12px rgba(35, 38, 46, 0.14);
+}
+
+@layer base {
+  html {
+    font-family: var(--font-sans);
+    color: var(--color-ink);
+    background-color: var(--color-bg);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body {
+    margin: 0;
+  }
+
+  ::selection {
+    background-color: var(--color-primary-200);
+  }
+
+  /* Rõ ràng khi điều hướng bằng bàn phím - không bao giờ tắt outline hoàn toàn */
+  :focus-visible {
+    outline: 2px solid var(--color-primary-500);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.001ms !important;
+      transition-duration: 0.001ms !important;
+    }
+  }
+}
+
+@layer utilities {
+  .font-hanzi {
+    font-family: var(--font-hanzi);
+  }
+}
