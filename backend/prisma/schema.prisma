@@ -1,83 +1,326 @@
-// Schema đã được duyệt ở Phase 1.
-// Chỉ 3 model: User, Vocabulary, UserVocabulary.
-// KHÔNG tự ý thêm bảng khác ở Phase 2.
+// Schema chuyển sang MySQL, khớp CHÍNH XÁC theo ERD do bạn cung cấp
+// (mermaid-diagram.png) — 16 bảng. Đây là bản thay thế hoàn toàn schema
+// lý do thiết kế tại docs/database.md.
 
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mysql"
   url      = env("DATABASE_URL")
 }
 
+// ==================================================
+// CORE: USERS & VOCABULARIES
+// ==================================================
+
 model User {
-  id           String   @id @default(uuid())
-  email        String   @unique
-  passwordHash String   @map("password_hash")
-  name         String
-  createdAt    DateTime @default(now()) @map("created_at")
-  updatedAt    DateTime @updatedAt @map("updated_at")
+  id           String   @id @default(uuid()) @db.Char(36)
+  email        String   @unique @db.VarChar(255)
+  passwordHash String   @map("password_hash") @db.VarChar(255)
+  displayName  String   @map("display_name") @db.VarChar(100)
+  avatarUrl    String?  @map("avatar_url") @db.VarChar(500)
 
-  userVocabularies    UserVocabulary[]
-  createdVocabularies Vocabulary[]     @relation("VocabularyCreatedBy")
-
-  @@map("users")
-}
-
-model Vocabulary {
-  id             String   @id @default(uuid())
-  hanzi          String
-  pinyin         String
-  meaning        String
-  example        String?
-  examplePinyin  String?  @map("example_pinyin")
-  exampleMeaning String?  @map("example_meaning")
-
-  // Chừa chỗ cho tính năng "kho từ vựng cá nhân" ở giai đoạn sau.
-  // null  = từ vựng thuộc kho chung (system/shared vocabulary)
-  // khác null = từ vựng do chính user đó tạo riêng
-  //
-  // onDelete: SetNull -> nếu xoá user đã tạo ra từ này, từ vựng
-  // KHÔNG bị xoá theo (dữ liệu học tập chung không nên mất),
-  // chỉ mất liên kết "ai đã tạo ra nó".
-  createdByUserId String?  @map("created_by_user_id")
-  createdBy       User?    @relation("VocabularyCreatedBy", fields: [createdByUserId], references: [id], onDelete: SetNull)
+  dailyGoal     Int @default(20) @map("daily_goal")
+  currentStreak Int @default(0) @map("current_streak")
+  longestStreak Int @default(0) @map("longest_streak")
+  totalXp       Int @default(0) @map("total_xp")
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
   userVocabularies UserVocabulary[]
+  userSentences    UserSentence[]
+  userAchievements UserAchievement[]
+  dailyStatistics  DailyStatistic[]
+  xpTransactions   XpTransaction[]
+  studySessions    StudySession[]
+
+  @@map("users")
+}
+
+model Vocabulary {
+  id           String  @id @default(uuid()) @db.Char(36)
+  hanzi        String  @db.VarChar(50)
+  pinyin       String  @db.VarChar(200)
+  meaning      String  @db.VarChar(500)
+  pronunciation String? @db.VarChar(200)
+  audioUrl     String? @map("audio_url") @db.VarChar(500)
+  /// HSK 1-6 hoặc tuỳ mức phân loại - lưu dạng chuỗi tự do (vd "HSK1"), không ràng buộc enum để dễ mở rộng.
+  level        String? @db.VarChar(20)
+  partOfSpeech String? @map("part_of_speech") @db.VarChar(50)
+  notes        String? @db.Text
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  examples         VocabularyExample[]
+  tags             VocabularyTag[]
+  userVocabularies UserVocabulary[]
+  userSentences    UserSentence[]
+  exerciseAttempts ExerciseAttempt[]
 
   @@index([hanzi])
   @@index([pinyin])
-  @@index([createdByUserId])
   @@map("vocabularies")
 }
 
+/// Ví dụ câu cho 1 từ vựng - tách bảng riêng (1 vocab có thể có N câu ví dụ),
+/// khác với thiết kế cũ (nhồi 1 example duy nhất vào chính bảng vocabularies).
+model VocabularyExample {
+  id             String @id @default(uuid()) @db.Char(36)
+  vocabularyId   String @map("vocabulary_id") @db.Char(36)
+  sentenceHanzi  String @map("sentence_hanzi") @db.VarChar(500)
+  sentencePinyin String @map("sentence_pinyin") @db.VarChar(500)
+  sentenceMeaning String @map("sentence_meaning") @db.VarChar(500)
+  audioUrl       String? @map("audio_url") @db.VarChar(500)
+
+  vocabulary Vocabulary @relation(fields: [vocabularyId], references: [id], onDelete: Cascade)
+
+  @@index([vocabularyId])
+  @@map("vocabulary_examples")
+}
+
+model Tag {
+  id   String @id @default(uuid()) @db.Char(36)
+  name String @unique @db.VarChar(50)
+
+  vocabularies VocabularyTag[]
+
+  @@map("tags")
+}
+
+/// Bảng trung gian many-to-many giữa Vocabulary <-> Tag.
+model VocabularyTag {
+  vocabularyId String @map("vocabulary_id") @db.Char(36)
+  tagId        String @map("tag_id") @db.Char(36)
+
+  vocabulary Vocabulary @relation(fields: [vocabularyId], references: [id], onDelete: Cascade)
+  tag        Tag        @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([vocabularyId, tagId])
+  @@index([tagId])
+  @@map("vocabulary_tags")
+}
+
+// ==================================================
+// HỌC TẬP CÁ NHÂN HOÁ (theo user)
+// ==================================================
+
+/// Danh sách từ đang học của user + trạng thái tổng hợp.
+/// LƯU Ý: interval/ease_factor SM-2 KHÔNG lưu ở đây - chỉ lưu ở SrsReview
+/// (bảng lịch sử). next_review_at ở đây là bản SAO CHÉP (denormalize) từ
+/// SrsReview mới nhất, chỉ để truy vấn nhanh "từ nào đến hạn ôn" mà không
+/// cần join ngược mỗi lần - xem services/srs.service.ts.
 model UserVocabulary {
-  id           String @id @default(uuid())
-  userId       String @map("user_id")
-  vocabularyId String @map("vocabulary_id")
+  id           String @id @default(uuid()) @db.Char(36)
+  userId       String @map("user_id") @db.Char(36)
+  vocabularyId String @map("vocabulary_id") @db.Char(36)
 
-  mastery      Int @default(0)
-  correctCount Int @default(0) @map("correct_count")
-  wrongCount   Int @default(0) @map("wrong_count")
+  /// "new" | "learning" | "mastered"
+  status String @default("new") @db.VarChar(20)
 
-  // Field chuẩn bị cho Spaced Repetition (Phase sau) - CHƯA có thuật toán,
-  // chỉ lưu giá trị mặc định hợp lý ở Phase này.
-  interval   Int       @default(0) // số ngày tới lần ôn kế tiếp
-  lastReview DateTime? @map("last_review")
-  nextReview DateTime? @map("next_review")
+  masteryLevel   Int @default(0) @map("mastery_level")
+  reviewCount    Int @default(0) @map("review_count")
+  correctCount   Int @default(0) @map("correct_count")
+  incorrectCount Int @default(0) @map("incorrect_count")
+
+  learnedAt      DateTime? @map("learned_at")
+  lastReviewedAt DateTime? @map("last_reviewed_at")
+  nextReviewAt   DateTime? @map("next_review_at")
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
   user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
   vocabulary Vocabulary @relation(fields: [vocabularyId], references: [id], onDelete: Cascade)
+  srsReviews SrsReview[]
 
   @@unique([userId, vocabularyId])
   @@index([userId])
-  @@index([nextReview])
+  @@index([nextReviewAt])
   @@map("user_vocabularies")
+}
+
+/// Lịch sử TỪNG lần ôn tập theo thuật toán SM-2 thật (không phải bảng SRS
+/// đơn giản như thiết kế cũ). previous_/new_ ease_factor + interval cho
+/// phép audit lại toàn bộ quá trình thay đổi lịch ôn của 1 từ.
+model SrsReview {
+  id               String @id @default(uuid()) @db.Char(36)
+  userVocabularyId String @map("user_vocabulary_id") @db.Char(36)
+
+  /// Chất lượng câu trả lời theo thang SM-2: 0-5 (0 = quên hoàn toàn, 5 = nhớ hoàn hảo).
+  quality Int
+
+  previousInterval    Int   @map("previous_interval")
+  newInterval         Int   @map("new_interval")
+  previousEaseFactor  Float @map("previous_ease_factor")
+  newEaseFactor       Float @map("new_ease_factor")
+
+  reviewedAt   DateTime @default(now()) @map("reviewed_at")
+  nextReviewAt DateTime @map("next_review_at")
+
+  userVocabulary UserVocabulary @relation(fields: [userVocabularyId], references: [id], onDelete: Cascade)
+
+  @@index([userVocabularyId])
+  @@index([nextReviewAt])
+  @@map("srs_reviews")
+}
+
+/// User tự đặt câu với 1 từ vựng để luyện tập - có thể được chấm/sửa
+/// (correction) sau đó (thủ công hoặc AI ở giai đoạn sau).
+model UserSentence {
+  id           String  @id @default(uuid()) @db.Char(36)
+  userId       String  @map("user_id") @db.Char(36)
+  vocabularyId String  @map("vocabulary_id") @db.Char(36)
+  sentence     String  @db.Text
+  pinyin       String? @db.VarChar(500)
+  correction   String? @db.Text
+  /// "pending" | "reviewed"
+  status       String  @default("pending") @db.VarChar(20)
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  vocabulary Vocabulary @relation(fields: [vocabularyId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([vocabularyId])
+  @@map("user_sentences")
+}
+
+// ==================================================
+// EXERCISE ENGINE & STUDY SESSIONS
+// ==================================================
+
+/// Catalog các LOẠI bài luyện tập (không phải ngân hàng câu hỏi cụ thể).
+/// Ví dụ 7 dòng cố định: QUIZ, REVERSE_QUIZ, PINYIN, LISTENING, WRITING,
+/// SENTENCE, SPEAKING (seed sẵn - xem prisma/seed.ts). Câu hỏi thực tế vẫn
+/// được ExerciseGenerator sinh động từ Vocabulary tại runtime; exercise_id
+/// ở exercise_attempts chỉ tham chiếu tới LOẠI bài đã dùng.
+model Exercise {
+  id          String  @id @default(uuid()) @db.Char(36)
+  /// Khoá loại bài, vd "QUIZ", "REVERSE_QUIZ" - dùng để tra cứu trong code.
+  type        String  @unique @db.VarChar(50)
+  title       String  @db.VarChar(200)
+  description String? @db.VarChar(500)
+
+  attempts ExerciseAttempt[]
+
+  @@map("exercises")
+}
+
+model StudySession {
+  id     String @id @default(uuid()) @db.Char(36)
+  userId String @map("user_id") @db.Char(36)
+
+  /// "mixed" | "daily_review" | "practice"
+  sessionType String @map("session_type") @db.VarChar(20)
+
+  totalQuestions Int @default(0) @map("total_questions")
+  correctAnswers Int @default(0) @map("correct_answers")
+  xpEarned       Int @default(0) @map("xp_earned")
+
+  startedAt   DateTime  @default(now()) @map("started_at")
+  completedAt DateTime? @map("completed_at")
+
+  user     User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  attempts ExerciseAttempt[]
+
+  @@index([userId, startedAt])
+  @@map("study_sessions")
+}
+
+model ExerciseAttempt {
+  id             String  @id @default(uuid()) @db.Char(36)
+  sessionId      String  @map("session_id") @db.Char(36)
+  exerciseId     String  @map("exercise_id") @db.Char(36)
+  vocabularyId   String  @map("vocabulary_id") @db.Char(36)
+  userAnswer     String  @map("user_answer") @db.VarChar(500)
+  isCorrect      Boolean @map("is_correct")
+  responseTimeMs Int?    @map("response_time_ms")
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  session    StudySession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  exercise   Exercise     @relation(fields: [exerciseId], references: [id], onDelete: Restrict)
+  vocabulary Vocabulary   @relation(fields: [vocabularyId], references: [id], onDelete: Cascade)
+
+  @@index([sessionId])
+  @@index([vocabularyId])
+  @@map("exercise_attempts")
+}
+
+// ==================================================
+// GAMIFICATION: ACHIEVEMENTS, XP, THỐNG KÊ
+// ==================================================
+
+model Achievement {
+  id          String @id @default(uuid()) @db.Char(36)
+  /// Khoá định danh dùng trong code để check điều kiện, vd "WORDS_50".
+  code        String @unique @db.VarChar(50)
+  name        String @db.VarChar(200)
+  description String? @db.VarChar(500)
+  icon        String? @db.VarChar(100)
+  xpReward    Int    @default(0) @map("xp_reward")
+
+  userAchievements UserAchievement[]
+
+  @@map("achievements")
+}
+
+model UserAchievement {
+  id            String   @id @default(uuid()) @db.Char(36)
+  userId        String   @map("user_id") @db.Char(36)
+  achievementId String   @map("achievement_id") @db.Char(36)
+  earnedAt      DateTime @default(now()) @map("earned_at")
+
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  achievement Achievement @relation(fields: [achievementId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, achievementId])
+  @@index([userId])
+  @@map("user_achievements")
+}
+
+/// Tổng hợp số liệu học tập THEO NGÀY/user - phục vụ biểu đồ tuần/tháng ở
+/// Dashboard & Statistics mà không cần quét toàn bộ exercise_attempts mỗi lần.
+model DailyStatistic {
+  id             String   @id @default(uuid()) @db.Char(36)
+  userId         String   @map("user_id") @db.Char(36)
+  statisticDate  DateTime @map("statistic_date") @db.Date
+
+  wordsLearned    Int @default(0) @map("words_learned")
+  wordsReviewed   Int @default(0) @map("words_reviewed")
+  correctAnswers  Int @default(0) @map("correct_answers")
+  incorrectAnswers Int @default(0) @map("incorrect_answers")
+  studyMinutes    Int @default(0) @map("study_minutes")
+  xpEarned        Int @default(0) @map("xp_earned")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, statisticDate])
+  @@index([userId, statisticDate])
+  @@map("daily_statistics")
+}
+
+/// Sổ cái (ledger) mọi lần cộng/trừ XP - thay vì chỉ tăng users.total_xp
+/// trực tiếp, giữ lại LỊCH SỬ vì sao có XP đó (audit, hiển thị "hoạt động
+/// gần đây" ở Dashboard).
+model XpTransaction {
+  id     String @id @default(uuid()) @db.Char(36)
+  userId String @map("user_id") @db.Char(36)
+  amount Int
+  /// vd "exercise_correct" | "daily_review_bonus" | "achievement"
+  source String @db.VarChar(50)
+  /// id của bản ghi liên quan (exercise_attempt_id / achievement_id...), tự do theo `source`.
+  referenceId String? @map("reference_id") @db.Char(36)
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+  @@map("xp_transactions")
 }

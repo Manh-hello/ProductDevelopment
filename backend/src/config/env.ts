@@ -19,7 +19,7 @@ const envSchema = z.object({
   DATABASE_URL: z
     .string()
     .min(1, "DATABASE_URL không được để trống")
-    .startsWith("postgresql://", "DATABASE_URL phải là connection string PostgreSQL"),
+    .startsWith("mysql://", "DATABASE_URL phải là connection string MySQL"),
   JWT_SECRET: z.string().min(1, "JWT_SECRET không được để trống"),
   JWT_EXPIRES_IN: z.string().default("7d"),
 });

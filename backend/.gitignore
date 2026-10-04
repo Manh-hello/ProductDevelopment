@@ -1,0 +1,11 @@
+node_modules/
+.env
+.env.*
+!.env.example
+dist/
+build/
+coverage/
+*.log
+
+# Không ignore Prisma migrations - phải commit để mọi máy áp dụng cùng lịch sử migration
+!backend/prisma/migrations/
