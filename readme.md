@@ -2,10 +2,6 @@
 
 Website hỗ trợ học, luyện tập và ghi nhớ từ vựng tiếng Trung, hướng tới một hệ thống học tập đa chiều (không chỉ flashcard đơn thuần): kết hợp nhận diện chữ Hán, Pinyin, nghĩa, nghe, viết, đặt câu, phát âm — cùng cơ chế Spaced Repetition để tối ưu việc ghi nhớ dài hạn.
 
-## Features
-
-Trạng thái hiện tại: dự án đang ở **Phase 2 — nền móng kỹ thuật**. Chưa có tính năng học tập nào hoàn chỉnh; xem [Development Status](#development-status) bên dưới.
-
 ## Tech Stack
 
 **Frontend**
@@ -41,7 +37,6 @@ chinese-vocabulary-app/
 ├── frontend/          # React + TypeScript + Vite
 ├── backend/           # Node.js + Express + TypeScript + Prisma
 ├── docs/              # Tài liệu kiến trúc, database, setup...
-├── database/          # (Dự trữ cho tài liệu/script liên quan database)
 ├── README.md
 ├── .gitignore
 └── .env.example
