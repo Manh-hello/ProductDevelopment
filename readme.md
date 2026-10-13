@@ -19,7 +19,7 @@ Website hỗ trợ học, luyện tập và ghi nhớ từ vựng tiếng Trung,
 
 **Database**
 
-- PostgreSQL
+- MySQL 8
 
 **ORM**
 
@@ -47,7 +47,7 @@ Chi tiết cấu trúc bên trong `backend/` và `frontend/`, xem [docs/architec
 ## Requirements
 
 - Node.js (v20+)
-- PostgreSQL
+- MySQL 8
 - npm
 
 ## Installation
@@ -80,7 +80,7 @@ npm run dev
 | Biến             | Ý nghĩa                                                  |
 | ---------------- | -------------------------------------------------------- |
 | `PORT`           | Port backend lắng nghe (mặc định `5000`)                 |
-| `DATABASE_URL`   | Connection string PostgreSQL                             |
+| `DATABASE_URL`   | MySQL connection string (ví dụ `mysql://user:password@localhost:3306/chinese_vocabulary`) |
 | `JWT_SECRET`     | Secret ký JWT — **sẽ dùng từ Phase 3**, cần khai báo sẵn |
 | `JWT_EXPIRES_IN` | Thời hạn token JWT (ví dụ `7d`)                          |
 
@@ -105,7 +105,7 @@ npm run dev
 - [x] Project structure (monorepo)
 - [x] Frontend setup (React + TS + Vite + Tailwind + Router)
 - [x] Backend setup (Express + TypeScript)
-- [x] PostgreSQL
+- [x] MySQL 8
 - [x] Prisma schema (`users`, `vocabularies`, `user_vocabularies`)
 - [x] Prisma migration _(chạy trên máy dev — xem lưu ý ở báo cáo Phase 2)_
 - [x] Prisma seed (10 từ cơ bản)

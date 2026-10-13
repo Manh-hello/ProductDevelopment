@@ -1,9 +1,9 @@
 import { z } from "zod";
 
 export const registerSchema = z.object({
-  name: z.string().trim().min(1, "Tên không được để trống").max(100),
+  name: z.string().trim().min(1, "Tên không được để trống").max(100, "Tên quá dài"),
   email: z.string().trim().email("Email không hợp lệ"),
-  password: z.string().min(6, "Mật khẩu cần ít nhất 6 ký tự").max(72),
+  password: z.string().min(6, "Mật khẩu cần ít nhất 6 ký tự").max(72, "Mật khẩu quá dài"),
 });
 
 export const loginSchema = z.object({
