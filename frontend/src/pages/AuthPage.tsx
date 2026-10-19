@@ -1,20 +1,47 @@
-import { useNavigate } from 'react-router-dom';
-import { useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { ApiError } from '../lib/api';
+import { useAuth } from '../lib/auth';
+import { useEffect, useState } from 'react';
 import type { FormEvent } from 'react';
 
 export default function AuthPage() {
   const navigate = useNavigate();
   const [reg, setReg] = useState(false);
   const [showPw, setShowPw] = useState(false);
-  const submit = (e: FormEvent<HTMLFormElement>) => {
+  const { login, register, user } = useAuth();
+  const location = useLocation();
+  const [error, setError] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
+  const from = (location.state as { from?: string } | null)?.from ?? '/dashboard';
+  useEffect(() => {
+    if (user) navigate(from, { replace: true });
+  }, [user, from, navigate]);
+
+  const submit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const f = e.currentTarget;
     const email = f.elements.namedItem('email') as HTMLInputElement;
     const pw = f.elements.namedItem('password') as HTMLInputElement;
+    const name = f.elements.namedItem('display_name') as HTMLInputElement | null;
     email.setCustomValidity(/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value) ? '' : 'Vui lòng nhập email hợp lệ.');
     pw.setCustomValidity(pw.value.length >= 6 ? '' : 'Mật khẩu cần tối thiểu 6 ký tự.');
+    name?.setCustomValidity(!reg || name.value.trim() ? '' : 'Vui lòng nhập tên hiển thị.');
     if (!f.reportValidity()) return;
-    navigate('/dashboard');
+    setError(null);
+    setBusy(true);
+    try {
+      if (reg) {
+        const goal = (f.querySelector('input[name="daily_goal"]:checked') as HTMLInputElement | null)?.value;
+        const level = (f.querySelector('input[name="hsk_tier"]:checked') as HTMLInputElement | null)?.value;
+        await register({ name: name!.value.trim(), email: email.value.trim(), password: pw.value, dailyGoal: goal ? Number(goal) : undefined, level });
+      } else {
+        await login(email.value.trim(), pw.value);
+      }
+    } catch (err) {
+      setError(err instanceof ApiError ? (Object.values(err.fieldErrors ?? {})[0]?.[0] ?? err.message) : 'Đã xảy ra lỗi.');
+    } finally {
+      setBusy(false);
+    }
   };
 
   return (
@@ -148,6 +175,26 @@ export default function AuthPage() {
                 </button>
               </div>
               <form className="flex flex-col gap-space-md" id="auth-form" onSubmit={submit} noValidate>
+                {reg && (
+                  <div className="flex flex-col gap-1.5">
+                    <label className="font-label-md text-label-md text-on-surface font-semibold" htmlFor="display_name">
+                      Tên hiển thị
+                    </label>
+                    <div className="relative">
+                      <span className="material-symbols-outlined absolute left-3 top-3 text-on-surface-variant text-xl pointer-events-none">
+                        person
+                      </span>
+                      <input
+                        className="w-full bg-surface-container-lowest text-on-surface rounded-xl pl-10 pr-4 py-3 font-body-md text-body-md shadow-sm outline-none focus:bg-surface-container-lowest"
+                        id="display_name"
+                        name="display_name"
+                        placeholder="Nguyễn Văn A"
+                        type="text"
+                        maxLength={100}
+                      />
+                    </div>
+                  </div>
+                )}
                 <div className="flex flex-col gap-1.5">
                   <label
                     className="font-label-md text-label-md text-on-surface font-semibold flex items-center justify-between"
@@ -165,6 +212,8 @@ export default function AuthPage() {
                     <input
                       className="w-full bg-surface-container-lowest text-on-surface rounded-xl pl-10 pr-4 py-3 font-body-md text-body-md shadow-sm outline-none focus:bg-surface-container-lowest"
                       id="email"
+                      name="email"
+                      autoComplete="email"
                       placeholder="hocgia@hanzisrs.edu.vn"
                       required
                       type="email"
@@ -187,6 +236,8 @@ export default function AuthPage() {
                     <input
                       className="w-full bg-surface-container-lowest text-on-surface rounded-xl pl-10 pr-11 py-3 font-body-md text-body-md shadow-sm outline-none"
                       id="password"
+                      name="password"
+                      autoComplete={reg ? 'new-password' : 'current-password'}
                       placeholder="••••••••••••"
                       required
                       type={showPw ? 'text' : 'password'}
@@ -291,26 +342,33 @@ export default function AuthPage() {
                     </div>
                   </div>
                 </div>
+                {error && (
+                  <p role="alert" className="rounded-lg bg-error-container text-on-error-container px-space-md py-2 font-body-sm text-body-sm">
+                    {error}
+                  </p>
+                )}
                 <button
-                  className="w-full py-3.5 px-6 rounded-lg bg-primary-container text-on-primary font-title-sm text-title-sm font-bold shadow-md hover:bg-primary transition-all flex items-center justify-center gap-2 mt-2"
+                  className="w-full py-3.5 px-6 rounded-lg bg-primary-container text-on-primary font-title-sm text-title-sm font-bold shadow-md hover:bg-primary transition-all flex items-center justify-center gap-2 mt-2 disabled:opacity-60"
                   id="submit-button"
                   type="submit"
+                  disabled={busy}
                 >
-                  <span id="submit-text">{reg ? 'Bắt đầu hành trình tiếng Trung' : 'Tiến vào Giảng đường Hanzi'}</span>
+                  <span id="submit-text">{busy ? 'Đang xử lý...' : reg ? 'Bắt đầu hành trình tiếng Trung' : 'Tiến vào Giảng đường Hanzi'}</span>
                   <span className="material-symbols-outlined text-lg">arrow_forward</span>
                 </button>
                 <div className="relative flex py-2 items-center">
                   <div className="flex-grow bg-surface-container-highest h-px"></div>
                   <span className="flex-shrink mx-4 text-on-surface-variant font-label-sm text-label-sm">
-                    Hoặc tiếp tục tức thì
+                    Đăng nhập mạng xã hội (sắp có)
                   </span>
                   <div className="flex-grow bg-surface-container-highest h-px"></div>
                 </div>
                 <div className="grid grid-cols-2 gap-space-sm">
                   <button
-                    className="flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg bg-surface-container-low text-on-surface font-title-sm text-title-sm hover:bg-surface-container-high transition-colors shadow-sm"
+                    className="flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg bg-surface-container-low text-on-surface font-title-sm text-title-sm hover:bg-surface-container-high transition-colors shadow-sm opacity-50 cursor-not-allowed"
                     type="button"
-                    onClick={() => navigate('/dashboard')}
+                    disabled
+                    title="Chưa hỗ trợ"
                   >
                     <svg className="w-5 h-5" viewBox="0 0 24 24">
                       <path
@@ -333,9 +391,10 @@ export default function AuthPage() {
                     <span>Google</span>
                   </button>
                   <button
-                    className="flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg bg-surface-container-low text-on-surface font-title-sm text-title-sm hover:bg-surface-container-high transition-colors shadow-sm"
+                    className="flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg bg-surface-container-low text-on-surface font-title-sm text-title-sm hover:bg-surface-container-high transition-colors shadow-sm opacity-50 cursor-not-allowed"
                     type="button"
-                    onClick={() => navigate('/dashboard')}
+                    disabled
+                    title="Chưa hỗ trợ"
                   >
                     <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24">
                       <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 6.37c.62-.75 1.04-1.8 0.92-2.85-.9.04-1.99.6-2.63 1.35-.57.65-.98 1.71-.85 2.72 1 .08 2.02-.51 2.56-1.22z" />

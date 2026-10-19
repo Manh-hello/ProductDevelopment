@@ -1,5 +1,7 @@
 # Mapping Frontend (hanzi-srs) ↔ Backend API
 
+> **Cập nhật (tính năng AI):** nội dung bên dưới là bản cũ khi frontend còn tĩnh — mã nguồn hiện nay đã nối API (xem `frontend/src/api/index.ts`). Phần đã nối thêm: `/vocabulary/new` → `POST /vocabularies/ai-lookup`; `/sentences` → `POST /user-sentences/generate`, `POST /user-sentences`; `/practice/saved-sentences` (mới) → `POST /practice/sessions` với `sentenceSource: "saved"`; `/vocabulary/:id` có nút "Tạo câu với từ này" → `/sentences?word=<id>`.
+
 Frontend hiện tại (`frontend/`, package `hanzi-srs`) là UI **tĩnh, chưa gọi API nào** (không có `fetch`/`axios`/biến môi trường trong code — dữ liệu là mock cứng trong từng trang, trạng thái tạm lưu qua `useStoredState` = localStorage). Bảng dưới đây map từng trang tới API đã có sẵn, để việc nối API thật sau này chỉ còn là thay `ROWS`/mock bằng kết quả `fetch`, không cần đổi lại thiết kế.
 
 | Trang (route) | API tương ứng | Trạng thái |

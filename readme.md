@@ -77,12 +77,12 @@ npm run dev
 
 **backend/.env**
 
-| Biến             | Ý nghĩa                                                  |
-| ---------------- | -------------------------------------------------------- |
-| `PORT`           | Port backend lắng nghe (mặc định `5000`)                 |
+| Biến             | Ý nghĩa                                                                                   |
+| ---------------- | ----------------------------------------------------------------------------------------- |
+| `PORT`           | Port backend lắng nghe (mặc định `5000`)                                                  |
 | `DATABASE_URL`   | MySQL connection string (ví dụ `mysql://user:password@localhost:3306/chinese_vocabulary`) |
-| `JWT_SECRET`     | Secret ký JWT — **sẽ dùng từ Phase 3**, cần khai báo sẵn |
-| `JWT_EXPIRES_IN` | Thời hạn token JWT (ví dụ `7d`)                          |
+| `JWT_SECRET`     | Secret ký JWT — **sẽ dùng từ Phase 3**, cần khai báo sẵn                                  |
+| `JWT_EXPIRES_IN` | Thời hạn token JWT (ví dụ `7d`)                                                           |
 
 **frontend/.env**
 
@@ -110,11 +110,11 @@ npm run dev
 - [x] Prisma migration _(chạy trên máy dev — xem lưu ý ở báo cáo Phase 2)_
 - [x] Prisma seed (10 từ cơ bản)
 - [x] Health check (`GET /api/health`)
-- [ ] Authentication (JWT)
-- [ ] Vocabulary CRUD
-- [ ] Exercise Engine
+- [x] Authentication (JWT)
+- [x] Vocabulary CRUD
+- [x] Exercise Engine
 - [ ] Spaced Repetition
-- [ ] Listening
+- [x] Listening
 - [ ] Speaking
 - [ ] AI (tạo bài tập, phân tích từ vựng)
 - [ ] Statistics

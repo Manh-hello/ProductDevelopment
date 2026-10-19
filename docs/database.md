@@ -40,6 +40,7 @@ erDiagram
 - **`exercises` là catalog LOẠI bài** (7 dòng seed: QUIZ, REVERSE_QUIZ, PINYIN, LISTENING, WRITING, SENTENCE, SPEAKING), không phải ngân hàng câu hỏi. Câu hỏi được sinh động từ `vocabularies`; `exercise_attempts.exercise_id` chỉ trỏ tới loại bài (`ON DELETE RESTRICT`).
 - **Không có `users.last_active_date`** (ERD không có): streak suy ra từ `daily_statistics` — nếu hôm qua có dòng thì nối chuỗi, không thì reset về 1.
 - **XP là sổ cái**: mỗi lần cộng XP tạo 1 dòng `xp_transactions` (`source` = `exercise_correct` | `daily_review_bonus` | `achievement`) đồng thời tăng `users.total_xp`.
+- **`user_sentences` mở rộng (migration `20261019000000_add_generated_sentence_fields`)**: thêm `translation`, `explanation`, `topic`, `level` (ước lượng), `source` (`manual|ai|existing`, mặc định `manual`), `used_words` (JSON `[{vocabularyId, hanzi, role}]`). `vocabulary_id` là từ mục tiêu chính. Câu có `translation` được practice engine dùng làm câu nền; câu "xem trước" chưa lưu thì không nằm trong DB. Không tạo bảng mới để tránh trùng với `vocabulary_examples` (dùng chung) và `user_sentences` (của riêng user).
 - **Cột `string` trong ERD giữ dạng VARCHAR** (không dùng ENUM): `user_vocabularies.status` = `new|learning|mastered`; `study_sessions.session_type` = `mixed|daily_review|practice`; `user_sentences.status` = `pending|reviewed`.
 - **Cascade**: xoá user/vocabulary xoá toàn bộ dữ liệu con. Ngoại lệ `exercise_attempts.exercise_id` = `RESTRICT`.
 - **Bỏ `vocabularies.created_by_user_id`** của thiết kế cũ — ERD mới coi `vocabularies` là kho chung.

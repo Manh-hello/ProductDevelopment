@@ -1,7 +1,9 @@
 import { Link, useNavigate } from 'react-router-dom';
 import useSearchKeyDown from './useSearchKeyDown';
+import { useAuth } from '../lib/auth';
 
 export default function Header() {
+  const { user, summary } = useAuth();
   const navigate = useNavigate();
   const onSearchKeyDown = useSearchKeyDown();
   return (
@@ -23,19 +25,29 @@ export default function Header() {
         <div className="flex items-center gap-space-sm">
           <div className="h-9 px-3 rounded-full bg-tertiary-fixed text-on-tertiary-fixed flex items-center gap-1.5 font-label-md text-label-md shadow-[0_2px_8px_rgba(217,119,6,0.18)]">
             <span className="material-symbols-outlined text-[18px] text-tertiary">local_fire_department</span>
-            <span>12 Ngày</span>
+            <span>{summary?.currentStreak ?? user?.currentStreak ?? 0} Ngày</span>
           </div>
           <div className="h-9 px-3 rounded-full bg-surface-container-high text-on-surface flex items-center gap-1.5 font-label-md text-label-md">
             <span className="material-symbols-outlined text-[18px] text-secondary">bolt</span>
-            <span>2,450 XP</span>
+            <span>{(summary?.xp ?? user?.totalXp ?? 0).toLocaleString('vi-VN')} XP</span>
           </div>
           <div
             className="h-9 px-3 rounded-full bg-primary-fixed text-on-primary-fixed flex items-center gap-1.5 font-label-md text-label-md"
             onClick={() => navigate('/review')}
             role="button"
           >
-            <span className="material-symbols-outlined text-[18px] text-primary">notifications</span>
-            <span>44 Từ cần ôn</span>
+            <span
+              className="material-symbols-outlined text-[18px] text-primary relative"
+              title="Thông báo"
+              onClick={(e) => {
+                e.stopPropagation();
+                navigate('/notifications');
+              }}
+            >
+              notifications
+              {(summary?.unreadNotifications ?? 0) > 0 && <span className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-error"></span>}
+            </span>
+            <span>{summary?.dueWords ?? 0} Từ cần ôn</span>
           </div>
         </div>
         <button
@@ -52,8 +64,8 @@ export default function Header() {
           role="button"
         >
           <div className="flex flex-col text-right hidden sm:flex">
-            <span className="font-title-sm text-title-sm font-bold text-on-surface leading-snug">Minh Quân</span>
-            <span className="font-label-sm text-label-sm text-primary font-bold">Lv.5 Học Giả</span>
+            <span className="font-title-sm text-title-sm font-bold text-on-surface leading-snug">{user?.displayName ?? ''}</span>
+            <span className="font-label-sm text-label-sm text-primary font-bold">Lv.{summary?.level ?? 1} {summary?.levelTitle ?? ''}</span>
           </div>
           <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center shadow-sm">
             <span className="material-symbols-outlined text-on-primary text-[18px]">person</span>

@@ -1,36 +1,12 @@
 import { PrismaClient } from "@prisma/client";
+import { ACHIEVEMENT_DEFS } from "../src/constants/achievementCatalog";
+import { EXERCISE_CATALOG } from "../src/constants/exerciseCatalog";
 
 const prisma = new PrismaClient();
 
-/** Catalog 7 loại bài luyện tập (bảng `exercises`) - khoá `type` khớp constants/exerciseTypes.ts. */
-const EXERCISES = [
-  { type: "QUIZ", title: "Trắc nghiệm Hán tự → nghĩa", description: "Nhìn chữ Hán, chọn nghĩa tiếng Việt đúng." },
-  { type: "REVERSE_QUIZ", title: "Trắc nghiệm nghĩa → Hán tự", description: "Nhìn nghĩa, chọn chữ Hán đúng." },
-  { type: "PINYIN", title: "Luyện Pinyin", description: "Nhìn chữ Hán, chọn Pinyin đúng." },
-  { type: "LISTENING", title: "Luyện nghe", description: "Nghe phát âm và chọn từ đúng." },
-  { type: "WRITING", title: "Luyện viết", description: "Viết lại chữ Hán theo nét bút thuận." },
-  { type: "SENTENCE", title: "Đặt câu", description: "Đặt câu với từ vựng cho sẵn." },
-  { type: "SPEAKING", title: "Luyện nói", description: "Đọc to và chấm phát âm." },
-  // --- Bổ sung theo giao diện hanzi-srs (usePracticeFlow.ts) - CHƯA có logic
-  // sinh câu hỏi ở exercise.service.ts (mới có catalog + XP mặc định), để
-  // khi nối API thật không phải thêm bảng/migration mới cho từng loại bài.
-  { type: "DICTATION", title: "Chép chính tả", description: "Nghe và gõ lại đúng chữ Hán/Pinyin." },
-  { type: "TRANSLATION", title: "Dịch câu", description: "Dịch câu Việt ⇄ Trung." },
-  { type: "FILL_BLANK", title: "Điền vào chỗ trống", description: "Điền từ còn thiếu trong câu." },
-  { type: "SENTENCE_ORDER", title: "Sắp xếp câu", description: "Sắp xếp các từ thành câu đúng ngữ pháp." },
-  { type: "SENTENCE_CREATION", title: "Luyện tạo câu (AI)", description: "Đặt câu theo ngữ cảnh, chấm bằng AI." },
-  { type: "TRANSLATION_HUB", title: "Dịch câu 2 chiều chuyên sâu", description: "Luyện dịch câu 2 chiều nâng cao." },
-  { type: "MULTI", title: "Luyện tập đa chiều", description: "Trộn nhiều dạng bài trong 1 phiên (Mixing Engine)." },
-];
+const EXERCISES = EXERCISE_CATALOG;
 
-/** Catalog thành tích (bảng `achievements`) - `code` khớp ACHIEVEMENT_CONDITIONS trong achievement.service.ts. */
-const ACHIEVEMENTS = [
-  { code: "WORDS_10", name: "Khởi đầu hành trình", description: "Học đúng 10 từ vựng đầu tiên", icon: "flag", xpReward: 50 },
-  { code: "WORDS_50", name: "Người kiên trì", description: "Học đúng 50 từ vựng", icon: "military_tech", xpReward: 150 },
-  { code: "WORDS_100", name: "Bậc thầy từ vựng", description: "Học đúng 100 từ vựng", icon: "workspace_premium", xpReward: 300 },
-  { code: "STREAK_7", name: "Một tuần bền bỉ", description: "Duy trì chuỗi học 7 ngày liên tiếp", icon: "local_fire_department", xpReward: 100 },
-  { code: "STREAK_30", name: "Kỷ luật thép", description: "Duy trì chuỗi học 30 ngày liên tiếp", icon: "bolt", xpReward: 500 },
-];
+const ACHIEVEMENTS = ACHIEVEMENT_DEFS.map(({ code, name, description, icon, xpReward }) => ({ code, name, description, icon, xpReward }));
 
 interface SeedVocab {
   hanzi: string;

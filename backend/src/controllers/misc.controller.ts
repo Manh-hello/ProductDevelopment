@@ -7,6 +7,8 @@ import * as tagService from "../services/tag.service";
 import * as achievementService from "../services/achievement.service";
 import * as userSentenceService from "../services/userSentence.service";
 import { createUserSentenceSchema, updateUserSentenceSchema } from "../validators/userSentence.validator";
+import { generateSentencesSchema } from "../validators/ai.validator";
+import * as sentenceGenerationService from "../services/learning/sentenceGeneration.service";
 
 const uid = (req: Request) => (req as AuthRequest).user.id;
 
@@ -21,6 +23,12 @@ export const listAchievements = asyncHandler(async (req: Request, res: Response)
 export const createUserSentence = asyncHandler(async (req: Request, res: Response) => {
   const input = parseOrThrow(createUserSentenceSchema, req.body);
   ok(res, await userSentenceService.createUserSentence(uid(req), input), 201);
+});
+
+/** Sinh câu từ vốn từ của user đăng nhập - chỉ trả bản XEM TRƯỚC, không ghi database. */
+export const generateUserSentences = asyncHandler(async (req: Request, res: Response) => {
+  const input = parseOrThrow(generateSentencesSchema, req.body);
+  ok(res, await sentenceGenerationService.generateSentences(uid(req), input), 200);
 });
 
 export const listUserSentences = asyncHandler(async (req: Request, res: Response) => {
