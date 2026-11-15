@@ -175,13 +175,23 @@ export async function removeVocabularyFromUser(userId: string, vocabularyId: str
   await prisma.userVocabulary.delete({ where: { id: existing.id } });
 }
 
+/** Số người dùng KHÁC đang học từ này (căn cứ để quyết định có được sửa/xoá bản gốc dùng chung hay không). */
+export async function countOtherLearners(userId: string, vocabularyId: string): Promise<number> {
+  return prisma.userVocabulary.count({ where: { vocabularyId, userId: { not: userId } } });
+}
+
 /** Hồ sơ trí nhớ của một từ (trang chi tiết từ): SRS, lịch sử, kỹ năng theo dạng bài, câu tự đặt. */
 export async function getVocabularyProgress(userId: string, vocabularyId: string) {
   const vocabulary = await prisma.vocabulary.findUnique({ where: { id: vocabularyId } });
   if (!vocabulary) throw new AppError("Không tìm thấy từ vựng.", 404);
 
   const uv = await prisma.userVocabulary.findUnique({ where: { userId_vocabularyId: { userId, vocabularyId } } });
-  if (!uv) return { inMyList: false as const, userVocabulary: null, skills: [], history: [], sentences: [] };
+  // Quyền sửa bản gốc dùng chung: chỉ khi không có người dùng khác đang học từ này. Frontend dùng cờ này để khoá form,
+  // nhờ vậy việc lưu ghi chú riêng không bao giờ phải gọi tới bảng gốc.
+  const otherLearners = await countOtherLearners(userId, vocabularyId);
+  const canEditShared = otherLearners === 0;
+
+  if (!uv) return { inMyList: false as const, canEditShared, otherLearners, userVocabulary: null, skills: [], history: [], sentences: [] };
 
   const [reviews, skills, sentences] = await Promise.all([
     prisma.srsReview.findMany({ where: { userVocabularyId: uv.id }, orderBy: { reviewedAt: "desc" }, take: 10 }),
@@ -193,6 +203,8 @@ export async function getVocabularyProgress(userId: string, vocabularyId: string
   const answered = uv.correctCount + uv.incorrectCount;
   return {
     inMyList: true as const,
+    canEditShared,
+    otherLearners,
     userVocabulary: {
       ...uv,
       state: deriveState(uv, now),

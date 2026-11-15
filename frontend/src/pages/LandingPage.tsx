@@ -1,5 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
+import PublicHeader from '../components/PublicHeader';
+import LibrarySection from '../components/library/LibrarySection';
 const HSK_DATA: Record<string, { label: string; days: string }> = {
   '1': { label: 'HSK 1 (150 Từ Vựng)', days: '10 Ngày' },
   '2': { label: 'HSK 2 (300 Từ Vựng)', days: '20 Ngày' },
@@ -13,6 +15,8 @@ export default function LandingPage() {
   const [hsk, setHsk] = useState('3');
 
   return (
+    <>
+    <PublicHeader />
     <div className="min-h-screen flex items-center justify-center">
       <main className="w-full max-w-[80rem] mx-auto">
         <div className="flex flex-col w-full">
@@ -189,6 +193,7 @@ export default function LandingPage() {
                 </div>
               </div>
             </section>
+            <LibrarySection />
             <section className="w-full px-gutter-sm sm:px-gutter py-space-xl" id="six-dimensions">
               <div className="text-center max-w-2xl mx-auto mb-space-xl">
                 <span className="font-label-sm uppercase tracking-widest text-primary font-bold">
@@ -713,5 +718,6 @@ export default function LandingPage() {
         </div>
       </main>
     </div>
+    </>
   );
 }

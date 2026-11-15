@@ -84,3 +84,16 @@ Chỉ dùng từ của user đăng nhập; mỗi lần chỉ gửi ≤ 5 từ m�
 
 ---
 > **Cập nhật:** nhiều endpoint đã thay đổi/bổ sung (shape của `GET /user-vocabularies`, `POST /practice/sessions`, câu hỏi không còn trả `hanzi` ở top-level mà nằm trong `display`...). Xem `docs/integration-changelog.md` để biết danh sách đầy đủ.
+
+## Catalog — Thư viện từ vựng (theo cấp độ HSK / chủ đề / trình độ)
+Phạm vi một "bộ từ": `level` (`HSK 1`…`HSK 6`, chấp nhận cả `HSK1`), `topic` (tên chủ đề = tên tag), `band` (`beginner` HSK 1-2 · `intermediate` HSK 3-4 · `advanced` HSK 5-6). Kết hợp được.
+
+| Method | URL | Auth | Kết quả |
+|---|---|---|---|
+| GET | `/catalog/overview` | Công khai (có token thì kèm tiến độ `learned`) | `{ totalWords, levels[{level,number,band,total,learned}], bands[{key,label,description,levels,total,learned}], topics[{name,icon,total,learned}], authenticated }` |
+| GET | `/catalog/words?level=&topic=&band=&search=&page=&limit=` | Công khai (có token thì kèm `inMyList`) | `{ items:[{id,hanzi,pinyin,meaning,partOfSpeech,level,tags[],examples[≤1],inMyList}], pagination }` — `limit` ≤ 100, mặc định 30 |
+| GET | `/catalog/words/:id` | Công khai (có token thì kèm `inMyList`) | Chi tiết một từ: như trên nhưng đủ `notes` và toàn bộ `examples` |
+| POST | `/catalog/enroll` | Bắt buộc | Body `{ level?|topic?|band?, limit? (1-300, mặc định 20) }` → thêm tối đa `limit` từ **chưa có** của bộ vào danh sách học (trạng thái `new`), idempotent. → `{ added, totalInScope, inMyList, remaining }` |
+
+`POST /practice/sessions` nhận thêm `scope: { level?, topic?, band? }` → chỉ luyện các từ **trong danh sách học của bạn** thuộc bộ đó (ưu tiên đến hạn ôn → từ yếu → từ mới). 400 nếu bạn chưa thêm từ nào của bộ. `sentenceSource: "saved"` được ưu tiên hơn `scope`.
+

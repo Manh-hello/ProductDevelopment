@@ -4,7 +4,7 @@ import type {
   SessionCompletion, SessionSummary, SkillScore, StartedSession, StatisticsOverview, User, UserSentence, UserVocabulary,
   UserVocabularyList, Vocabulary, VocabularyProgress, WeakWord, AppNotification, Example,
   GenerateSentencesResult, SentenceMode, UsedWord, WordLookupResult,
-} from '../lib/types';
+} from '../lib/types.ts';
 
 export const authApi = {
   login: (email: string, password: string) => post<{ user: User; token: string }>('/auth/login', { email, password }),
@@ -52,7 +52,7 @@ export const myWordsApi = {
 };
 
 export const practiceApi = {
-  start: (body: { sessionType?: 'mixed' | 'daily_review' | 'practice'; sessionSize?: number; exerciseTypes?: string[]; sentenceSource?: 'saved' }) =>
+  start: (body: { sessionType?: 'mixed' | 'daily_review' | 'practice'; sessionSize?: number; exerciseTypes?: string[]; sentenceSource?: 'saved'; scope?: CatalogScope }) =>
     post<StartedSession>('/practice/sessions', body),
   answer: (
     sessionId: string,
@@ -79,6 +79,47 @@ export const pinyinApi = {
   /** Hán tự / Pinyin số thanh (lao3shi1) → Pinyin có dấu (lǎoshī). */
   convert: (text: string, style: PinyinStyle = 'word') =>
     post<{ input: string; pinyin: string; hadHanzi: boolean; hadToneNumbers: boolean }>('/pinyin/convert', { text, style }),
+};
+
+/** Một "bộ từ": theo cấp độ HSK ("HSK 1"), chủ đề (tên tag) hoặc trình độ người học. */
+export interface CatalogScope {
+  level?: string;
+  topic?: string;
+  band?: 'beginner' | 'intermediate' | 'advanced';
+}
+
+export interface CatalogLevel { level: string; number: number; band: CatalogScope['band'] | null; total: number; learned: number | null }
+export interface CatalogBand { key: NonNullable<CatalogScope['band']>; label: string; description: string; levels: string[]; total: number; learned: number | null }
+export interface CatalogTopic { name: string; icon: string; total: number; learned: number | null }
+export interface CatalogOverview { totalWords: number; levels: CatalogLevel[]; bands: CatalogBand[]; topics: CatalogTopic[]; authenticated: boolean }
+export interface CatalogWord extends Vocabulary { inMyList: boolean | null }
+export interface RelatedWord { word: string; pinyin?: string; note?: string }
+export interface Collocation { phrase: string; pinyin?: string; meaning?: string }
+/** Chi tiết một từ: gồm các trường AI làm giàu (null nếu chưa chạy `npm run prisma:enrich`). */
+export interface CatalogWordDetail extends CatalogWord {
+  hanViet?: string | null;
+  traditional?: string | null;
+  measureWord?: string | null;
+  usage?: string | null;
+  synonyms?: RelatedWord[] | null;
+  antonyms?: RelatedWord[] | null;
+  collocations?: Collocation[] | null;
+  examples: (CatalogWord['examples'][number] & { explanation?: string | null })[];
+}
+export interface CatalogWordList {
+  items: CatalogWord[];
+  pagination: { page: number; limit: number; total: number; totalPages: number };
+}
+export interface EnrollResult { added: number; totalInScope: number; inMyList: number; remaining: number }
+
+export const catalogApi = {
+  /** Công khai: số từ theo cấp độ / chủ đề / trình độ (kèm tiến độ nếu đã đăng nhập). */
+  overview: () => get<CatalogOverview>('/catalog/overview'),
+  words: (q: CatalogScope & { search?: string; page?: number; limit?: number }) => get<CatalogWordList>('/catalog/words', { ...q }),
+  /** Chi tiết một từ (đủ câu ví dụ, ghi chú). */
+  word: (id: string) => get<CatalogWordDetail>(`/catalog/words/${id}`),
+  /** "Học bộ này": thêm tối đa `limit` từ chưa có của bộ vào danh sách học. */
+  enroll: (body: CatalogScope & { limit?: number }) => post<EnrollResult>('/catalog/enroll', body),
 };
 
 export const statsApi = { overview: (range: string) => get<StatisticsOverview>('/statistics/overview', { range }) };

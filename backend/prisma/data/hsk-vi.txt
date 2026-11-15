@@ -1,0 +1,604 @@
+# Dữ liệu từ vựng HSK (danh sách HSK 2.0: HSK 1-3) — nghĩa tiếng Việt, loại từ, chủ đề.
+# Định dạng: hanzi|nghĩa tiếng Việt|loại từ|mã chủ đề[|pinyin ghi đè]
+# Pinyin được tạo bằng pinyin-pro khi seed (chỉ ghi đè ở trường thứ 5 khi cần, vd tên riêng viết hoa).
+# Loại từ: n danh từ, v động từ, a tính từ, d phó từ, r đại từ, m số từ, q lượng từ, p giới từ, c liên từ,
+#          u trợ từ, t từ chỉ thời gian, f từ chỉ phương hướng, e thán từ, x cụm từ, z danh từ riêng.
+# Chủ đề: xem TOPICS trong prisma/hskSeedData.ts
+# HSK 1
+爱|yêu; thích|v|19
+八|tám|m|3
+爸爸|bố, ba|n|2
+杯子|cái cốc, ly|n|10
+北京|Bắc Kinh|z|17|Běijīng
+本|quyển (lượng từ cho sách)|q|3
+不|không|d|15
+不客气|đừng khách sáo|x|1|bùkèqi
+菜|món ăn; rau|n|5
+茶|trà|n|5
+吃|ăn|v|5
+出租车|taxi|n|7
+打电话|gọi điện thoại|v|13
+大|to, lớn|a|14
+的|của; (trợ từ kết cấu)|u|15
+点|giờ (chỉ thời gian); chút, điểm|q|4
+电脑|máy tính|n|10
+电视|ti vi|n|16
+电影|phim chiếu rạp|n|16
+东西|đồ vật, đồ đạc|n|10
+都|đều, cũng đều|d|15
+读|đọc|v|8
+对不起|xin lỗi|x|1|duìbuqǐ
+多|nhiều|a|14
+多少|bao nhiêu|r|3
+儿子|con trai|n|2
+二|hai|m|3
+饭馆|nhà hàng, quán ăn|n|5
+飞机|máy bay|n|7
+分钟|phút|q|4
+高兴|vui, vui mừng|a|19
+个|cái; con (lượng từ phổ biến)|q|3
+工作|làm việc; công việc|v|9
+狗|con chó|n|12
+汉语|tiếng Hán, tiếng Trung|n|8|Hànyǔ
+好|tốt, tốt đẹp; khỏe|a|14
+喝|uống|v|5
+和|và, với|c|15
+很|rất|d|15
+后面|phía sau, đằng sau|f|17|hòumian
+回|về, quay lại|v|7
+会|biết (làm gì); sẽ|v|13
+火车站|ga tàu hỏa|n|7
+几|mấy, vài|r|3
+家|nhà; gia đình|n|10
+叫|gọi; tên là|v|1
+今天|hôm nay|t|4
+九|chín|m|3
+开|mở; lái (xe)|v|13
+看|nhìn, xem|v|13
+看见|nhìn thấy|v|13
+块|đồng (tiền); miếng|q|6
+来|đến|v|7
+老师|giáo viên, thầy cô|n|8
+了|rồi (trợ từ hoàn thành)|u|15
+冷|lạnh|a|12
+里|trong, bên trong|f|17
+零|không (số 0)|m|3
+六|sáu|m|3
+妈妈|mẹ|n|2
+吗|không? (trợ từ nghi vấn)|u|15
+买|mua|v|6
+猫|con mèo|n|12
+没|không có; chưa|d|15
+没关系|không sao đâu|x|1|méiguānxi
+米饭|cơm|n|5
+名字|tên|n|1|míngzi
+明天|ngày mai|t|4
+哪|nào, ở đâu|r|15
+那|kia, đó|r|15
+呢|thế, nhỉ (trợ từ)|u|15
+能|có thể, có khả năng|v|13
+你|bạn, anh/chị|r|1
+年|năm|q|4
+女儿|con gái|n|2
+朋友|bạn bè|n|2|péngyou
+漂亮|đẹp|a|14
+苹果|quả táo|n|5
+七|bảy|m|3
+前面|phía trước|f|17
+钱|tiền|n|6
+请|mời; xin vui lòng|v|1
+去|đi|v|7
+热|nóng|a|12
+人|người|n|2
+认识|quen biết, nhận ra|v|1
+日|ngày; mặt trời|t|4
+三|ba|m|3
+商店|cửa hàng|n|6
+上|trên; lên|f|17
+上午|buổi sáng|t|4
+少|ít|a|14
+什么|cái gì, gì|r|15
+十|mười|m|3
+时候|lúc, khi, thời gian|n|4|shíhou
+是|là; vâng|v|15
+书|sách|n|8
+谁|ai|r|15|shéi
+水|nước|n|5
+水果|trái cây, hoa quả|n|5
+睡觉|ngủ|v|13
+说话|nói chuyện|v|1
+四|bốn|m|3
+岁|tuổi|q|2
+他|anh ấy, ông ấy|r|2
+她|cô ấy, bà ấy|r|2
+太|quá, rất|d|15
+天气|thời tiết|n|12
+听|nghe|v|13
+同学|bạn học|n|8
+喂|a lô, này|e|1
+我|tôi|r|1
+我们|chúng tôi, chúng ta|r|1
+五|năm|m|3
+喜欢|thích|v|19
+下|dưới; xuống|f|17
+下午|buổi chiều|t|4
+下雨|trời mưa|v|12
+先生|ngài; ông; chồng|n|2|xiānsheng
+现在|bây giờ|t|4
+想|nghĩ; muốn; nhớ|v|19
+小|nhỏ, bé|a|14
+小姐|cô, tiểu thư|n|2|xiǎojie
+些|một vài, một ít|q|3
+写|viết|v|8
+谢谢|cảm ơn|v|1|xièxie
+星期|tuần; thứ|n|4
+学生|học sinh, sinh viên|n|8|xuésheng
+学习|học, học tập|v|8
+学校|trường học|n|8
+一|một|m|3
+衣服|quần áo|n|18
+医生|bác sĩ|n|11
+医院|bệnh viện|n|11
+椅子|cái ghế|n|10
+有|có|v|13
+月|tháng; mặt trăng|n|4
+再见|tạm biệt|v|1
+在|ở, tại; đang|v|15
+怎么|thế nào, làm sao|r|15
+怎么样|thế nào, ra sao|r|15
+这|này, đây|r|15
+中国|Trung Quốc|z|17|Zhōngguó
+中午|buổi trưa|t|4
+住|ở, sống (cư trú)|v|10
+桌子|cái bàn|n|10
+字|chữ|n|8
+昨天|hôm qua|t|4
+坐|ngồi; đi (bằng phương tiện)|v|7
+做|làm|v|13
+# HSK 2
+吧|nhé, đi (trợ từ)|u|15
+白|trắng|a|18
+百|trăm|m|3
+帮助|giúp đỡ|v|13
+报纸|báo, tờ báo|n|10
+比|so với, hơn|p|15
+便宜|rẻ|a|6
+别|đừng|d|15
+唱歌|hát|v|16
+出|ra, đi ra|v|7
+穿|mặc|v|18
+船|thuyền, tàu thủy|n|7
+次|lần|q|3
+从|từ|p|15
+错|sai; nhầm|a|14
+打篮球|chơi bóng rổ|v|16
+大家|mọi người|r|1
+但是|nhưng|c|15
+到|đến; tới|v|7
+得|(trợ từ bổ ngữ); phải|u|15
+弟弟|em trai|n|2
+第一|thứ nhất, đầu tiên|m|3
+懂|hiểu|v|8
+房间|căn phòng|n|10
+非常|rất, vô cùng|d|15
+服务员|nhân viên phục vụ|n|9
+高|cao|a|14
+告诉|nói cho biết, bảo|v|1
+哥哥|anh trai|n|2
+给|cho; đưa cho|v|13
+公共汽车|xe buýt|n|7
+公斤|ki-lô-gam|q|6
+公司|công ty|n|9
+贵|đắt; quý|a|6
+还|còn, vẫn; mà còn|d|15
+孩子|đứa trẻ, con cái|n|2
+好吃|ngon|a|5
+号|số; ngày (mồng)|q|4
+黑|đen|a|18
+红|đỏ|a|18
+欢迎|hoan nghênh, chào đón|v|1
+回答|trả lời|v|8
+机场|sân bay|n|7
+鸡蛋|trứng gà|n|5
+件|chiếc, cái (áo, việc)|q|18
+教室|phòng học|n|8
+介绍|giới thiệu|v|1
+姐姐|chị gái|n|2
+近|gần|a|17
+进|vào, đi vào|v|7
+就|thì, liền; chỉ|d|15
+觉得|cảm thấy, thấy rằng|v|19
+咖啡|cà phê|n|5
+开始|bắt đầu|v|13
+考试|thi, kỳ thi|v|8
+可能|có thể, có khả năng|v|15
+可以|có thể; được phép|v|13
+课|bài học; tiết học|n|8
+快|nhanh; sắp|a|14
+快乐|vui vẻ, hạnh phúc|a|19
+累|mệt|a|11
+离|cách, rời xa|p|17
+两|hai (dùng trước lượng từ)|m|3
+路|đường|n|7
+旅游|du lịch|v|7
+卖|bán|v|6
+慢|chậm|a|14
+忙|bận|a|14
+每|mỗi|r|3
+妹妹|em gái|n|2
+门|cửa|n|10
+男人|đàn ông|n|2
+您|ngài, ông/bà (kính ngữ)|r|1
+牛奶|sữa bò|n|5
+女人|phụ nữ|n|2
+旁边|bên cạnh|f|17
+跑步|chạy bộ|v|16
+票|vé|n|7
+妻子|vợ|n|2
+起床|thức dậy, ngủ dậy|v|13
+千|nghìn|m|3
+晴|trời nắng, quang đãng|a|12
+去年|năm ngoái|t|4
+让|để, bảo; nhường|v|13
+上班|đi làm|v|9
+身体|cơ thể; sức khỏe|n|11
+生病|bị ốm|v|11
+生日|sinh nhật|n|4
+时间|thời gian|n|4
+事情|sự việc, chuyện|n|9|shìqing
+手表|đồng hồ đeo tay|n|10
+手机|điện thoại di động|n|10
+送|tặng; tiễn; đưa|v|13
+所以|vì vậy, cho nên|c|15
+它|nó (chỉ vật)|r|12
+踢|đá|v|16
+题|đề, câu hỏi bài|n|8
+跳舞|nhảy, khiêu vũ|v|16
+外|ngoài|f|17
+完|xong, hết|v|13
+玩|chơi|v|16
+晚上|buổi tối|t|4|wǎnshang
+为|vì; làm (cho)|p|15
+问|hỏi|v|1
+问题|câu hỏi; vấn đề|n|8
+希望|hy vọng|v|19
+洗|rửa, giặt, tắm|v|13
+西瓜|dưa hấu|n|5
+向|hướng về, về phía|p|17
+小时|giờ (đồng hồ), tiếng|n|4
+笑|cười|v|19
+新|mới|a|14
+姓|họ; mang họ|v|1
+休息|nghỉ ngơi|v|13
+雪|tuyết|n|12
+颜色|màu sắc|n|18
+眼睛|mắt|n|11|yǎnjing
+羊肉|thịt cừu, thịt dê|n|5
+药|thuốc|n|11
+要|muốn; cần; phải|v|13
+也|cũng|d|15
+一起|cùng nhau|d|15|yīqǐ
+已经|đã, rồi|d|15
+意思|ý nghĩa; ý|n|8|yìsi
+因为|bởi vì|c|15
+阴|âm u, nhiều mây|a|12
+游泳|bơi lội|v|16
+右边|bên phải|f|17|yòubian
+鱼|cá|n|5
+元|đồng (nhân dân tệ)|q|6
+远|xa|a|17
+运动|vận động, thể thao|v|16
+再|lại, nữa|d|15
+早上|buổi sáng sớm|t|4|zǎoshang
+张|tờ, tấm (lượng từ)|q|3
+长|dài|a|14
+丈夫|chồng|n|2
+找|tìm; thối (tiền)|v|13
+着|đang, đã (trợ từ)|u|15
+真|thật, thực sự|d|15
+正在|đang|d|15
+知道|biết|v|8
+准备|chuẩn bị|v|13
+自行车|xe đạp|n|7
+走|đi, đi bộ|v|7
+最|nhất|d|15
+左边|bên trái|f|17|zuǒbian
+# HSK 3
+阿姨|dì; cô (gọi người phụ nữ lớn tuổi)|n|2
+啊|à, ạ, nhỉ (thán từ)|e|15
+矮|thấp (người)|a|14
+爱好|sở thích|n|16
+安静|yên tĩnh|a|14
+把|(giới từ 把); nắm lấy|p|15
+班|lớp; ca (làm việc)|n|8
+搬|chuyển, dọn, khuân|v|13
+办法|cách, biện pháp|n|9
+办公室|văn phòng|n|9
+半|nửa, rưỡi|m|4
+帮忙|giúp đỡ, giúp một tay|v|13
+包|bọc, gói; túi, cái bao|n|10
+饱|no|a|5
+北方|phương bắc, miền bắc|f|17
+被|bị, được (câu bị động)|p|15
+鼻子|mũi|n|11
+比较|tương đối; so sánh|d|15
+比赛|cuộc thi, trận đấu|n|16
+必须|phải, nhất định phải|d|15
+变化|biến đổi, thay đổi|v|14
+表示|biểu thị, bày tỏ|v|1
+表演|biểu diễn|v|16
+别人|người khác|r|2|biéren
+宾馆|khách sạn, nhà khách|n|7
+冰箱|tủ lạnh|n|10
+才|mới, vừa mới|d|15
+菜单|thực đơn|n|5
+参加|tham gia|v|13
+草|cỏ|n|12
+层|tầng, lớp|q|10
+差|kém; thiếu|a|14
+超市|siêu thị|n|6
+衬衫|áo sơ mi|n|18
+成绩|thành tích, điểm số|n|8
+城市|thành phố|n|17
+迟到|đến muộn|v|8
+出现|xuất hiện|v|13
+除了|ngoài ra, trừ|p|15
+厨房|nhà bếp|n|10
+春|mùa xuân|t|12
+词语|từ ngữ|n|8
+聪明|thông minh|a|14
+打扫|quét dọn, dọn dẹp|v|10
+打算|dự định, tính|v|13
+带|mang, đem; dẫn|v|13
+担心|lo lắng|v|19
+蛋糕|bánh ngọt, bánh kem|n|5
+当然|đương nhiên, tất nhiên|d|15
+地|(trợ từ 地: một cách); đất|u|15
+地方|nơi, chỗ|n|17
+地铁|tàu điện ngầm|n|7
+地图|bản đồ|n|7
+灯|đèn|n|10
+低|thấp|a|14
+电梯|thang máy|n|10
+电子|điện tử|n|10
+东|phía đông|f|17
+冬|mùa đông|t|12
+动物|động vật|n|12
+短|ngắn|a|14
+段|đoạn, khúc|q|3
+锻炼|rèn luyện, tập thể dục|v|16
+多么|biết bao, làm sao mà|d|15
+饿|đói|a|5
+而且|hơn nữa, mà còn|c|15
+耳朵|tai|n|11
+发烧|sốt|v|11
+发现|phát hiện, nhận ra|v|13
+方便|tiện lợi, thuận tiện|a|14
+放|đặt, để; thả|v|13
+放心|yên tâm|v|19
+分|phút; chia; điểm|q|4
+附近|gần đây, vùng lân cận|f|17
+复习|ôn tập|v|8
+敢|dám|v|13
+感冒|cảm cúm, bị cảm|v|11
+干净|sạch sẽ|a|14
+刚才|vừa nãy, lúc nãy|t|4
+根据|căn cứ vào, theo|p|15
+跟|cùng với; theo; gót chân|p|15
+更|càng, hơn nữa|d|15
+公园|công viên|n|16
+故事|câu chuyện|n|16
+刮|thổi (gió); cạo|v|12
+关|đóng, tắt|v|13
+关系|quan hệ, mối liên hệ|n|2|guānxi
+关心|quan tâm|v|19
+关于|về, liên quan đến|p|15
+国家|quốc gia, đất nước|n|17
+果汁|nước ép trái cây|n|5
+过去|đã qua, quá khứ; đi qua|v|4
+还是|hay là; vẫn còn|c|15|háishi
+害怕|sợ, sợ hãi|v|19
+河|sông|n|12
+黑板|bảng đen|n|8
+护照|hộ chiếu|n|7
+花|hoa; tiêu, tốn|n|12
+花园|vườn hoa|n|12
+画|vẽ; bức tranh|v|16
+坏|xấu, hỏng|a|14
+环境|môi trường, hoàn cảnh|n|12
+换|đổi, thay|v|13
+黄|màu vàng|a|18
+会议|cuộc họp, hội nghị|n|9
+或者|hoặc, hay là|c|15
+机会|cơ hội|n|9
+极|cực kỳ, vô cùng|d|15
+几乎|hầu như, gần như|d|15
+记得|nhớ|v|8
+季节|mùa, thời vụ|n|12
+检查|kiểm tra|v|11
+简单|đơn giản|a|14
+见面|gặp mặt|v|1
+健康|khỏe mạnh; sức khỏe|a|11
+讲|nói, kể, giảng|v|1
+角|hào (đơn vị tiền); góc|q|6
+脚|chân (bàn chân)|n|11
+教|dạy|v|8
+接|đón; nhận; nối|v|13
+街道|đường phố|n|17
+节目|tiết mục, chương trình|n|16
+节日|ngày lễ, ngày hội|n|4
+结婚|kết hôn|v|2
+结束|kết thúc|v|13
+解决|giải quyết|v|9
+借|mượn, vay; cho mượn|v|13
+经常|thường xuyên|d|15
+经过|đi qua; trải qua|v|7
+经理|giám đốc, quản lý|n|9
+久|lâu|a|4
+旧|cũ|a|14
+举行|tổ chức (sự kiện)|v|9
+句子|câu|n|8
+决定|quyết định|v|13
+可爱|dễ thương, đáng yêu|a|14
+渴|khát|a|5
+刻|khắc (15 phút)|q|4
+客人|khách|n|2
+空调|điều hòa không khí|n|10
+口|miệng; khẩu (lượng từ)|n|11
+哭|khóc|v|19
+裤子|quần|n|18|kùzi
+筷子|đôi đũa|n|5
+蓝|xanh lam, xanh dương|a|18
+老|già; cũ; (tiền tố gọi thân mật)|a|14
+了解|hiểu rõ, tìm hiểu|v|8
+离开|rời khỏi, rời đi|v|7
+礼物|quà tặng|n|6
+历史|lịch sử|n|8
+脸|mặt, khuôn mặt|n|11
+练习|luyện tập, bài tập|v|8
+辆|chiếc (lượng từ cho xe)|q|7
+邻居|hàng xóm|n|2
+楼|tòa nhà; tầng lầu|n|10
+绿|xanh lá|a|18
+马|con ngựa|n|12
+马上|lập tức, ngay|d|15
+满意|hài lòng|a|19
+帽子|cái mũ|n|18
+米|mét; gạo|q|6
+面包|bánh mì|n|5
+面条|mì sợi|n|5
+明白|hiểu, rõ ràng|v|8|míngbai
+拿|cầm, lấy|v|13
+奶奶|bà nội|n|2
+南|phía nam|f|17
+难|khó|a|14
+难过|buồn, khó chịu|a|19
+年级|khối lớp, năm học|n|8
+年轻|trẻ, trẻ tuổi|a|14
+鸟|con chim|n|12
+努力|nỗ lực, cố gắng|a|8
+爬山|leo núi|v|16
+盘子|cái đĩa|n|5
+胖|béo, mập|a|11
+啤酒|bia|n|5
+葡萄|nho|n|5|pútao
+普通话|tiếng phổ thông|n|8|pǔtōnghuà
+其实|thật ra, kỳ thực|d|15
+其他|khác, cái khác|r|15
+奇怪|kỳ lạ, lạ|a|14
+骑|cưỡi, đi (xe đạp, xe máy)|v|7
+铅笔|bút chì|n|8
+清楚|rõ ràng|a|14|qīngchu
+秋|mùa thu|t|12
+裙子|váy|n|18|qúnzi
+然后|sau đó, rồi|c|15
+热情|nhiệt tình|a|14
+认为|cho rằng, nghĩ rằng|v|19
+认真|nghiêm túc, chăm chỉ|a|14
+容易|dễ|a|14
+如果|nếu, nếu như|c|15
+伞|cái ô, cái dù|n|12
+上网|lên mạng, vào internet|v|16
+生气|tức giận|v|19
+声音|âm thanh, giọng|n|13
+使|khiến, làm cho|v|15
+世界|thế giới|n|17
+瘦|gầy, ốm|a|11
+叔叔|chú|n|2
+舒服|dễ chịu, thoải mái|a|11|shūfu
+树|cây|n|12
+数学|toán học|n|8
+刷|đánh (răng), chải, quẹt|v|13
+双|đôi, cặp|q|3
+水平|trình độ, mức độ|n|8
+司机|tài xế|n|9
+虽然|tuy, mặc dù|c|15
+太阳|mặt trời|n|12|tàiyang
+糖|đường; kẹo|n|5
+特别|đặc biệt|a|14
+疼|đau|a|11
+提高|nâng cao|v|8
+体育|thể dục, thể thao|n|16
+甜|ngọt|a|5
+条|con, sợi, chiếc (dài)|q|3
+同事|đồng nghiệp|n|9
+同意|đồng ý|v|1
+头发|tóc|n|11
+突然|đột nhiên|a|14
+图书馆|thư viện|n|8
+腿|chân (cẳng chân)|n|11
+完成|hoàn thành|v|9
+碗|cái bát, chén|n|5
+万|vạn, mười nghìn|m|3
+忘记|quên|v|8
+为了|để, vì|p|15
+为什么|tại sao, vì sao|r|15
+位|vị (lượng từ lịch sự)|q|3
+文化|văn hóa|n|8
+习惯|thói quen; quen|n|13
+洗手间|nhà vệ sinh|n|10
+洗澡|tắm|v|13
+西|phía tây|f|17
+夏|mùa hè|t|12
+先|trước, trước tiên|d|15
+相同|giống nhau|a|14
+相信|tin tưởng|v|19
+香蕉|chuối|n|5
+像|giống; ví như|v|14
+小心|cẩn thận|a|14
+校长|hiệu trưởng|n|8
+鞋|giày|n|18
+新闻|tin tức|n|16
+新鲜|tươi; mới mẻ|a|5
+信|thư; tin tưởng|n|13
+行李箱|vali, hành lý|n|7
+兴趣|hứng thú, sở thích|n|16
+熊猫|gấu trúc|n|12
+需要|cần, nhu cầu|v|13
+选择|lựa chọn|v|13
+眼镜|kính (mắt)|n|18
+要求|yêu cầu|v|9
+爷爷|ông nội|n|2
+一般|bình thường, thường|a|14|yībān
+一边|vừa... vừa...; một bên|d|15|yībiān
+一定|nhất định, chắc chắn|d|15|yīdìng
+一共|tổng cộng|d|6|yīgòng
+一会儿|một lát, một chút|m|4|yīhuìr
+一样|giống nhau|a|14|yīyàng
+一直|luôn luôn; thẳng|d|15|yīzhí
+以后|sau này, sau khi|f|4
+以前|trước đây, trước kia|f|4
+以为|tưởng rằng, cứ ngỡ|v|19
+音乐|âm nhạc|n|16
+银行|ngân hàng|n|6
+应该|nên, cần phải|v|15
+影响|ảnh hưởng|v|9
+用|dùng, sử dụng|v|13
+游戏|trò chơi|n|16
+有名|nổi tiếng|a|14
+又|lại, lại lần nữa|d|15
+遇到|gặp phải, bắt gặp|v|13
+愿意|bằng lòng, sẵn lòng|v|19
+月亮|mặt trăng|n|12|yuèliang
+越|càng; vượt|d|15
+云|mây|n|12
+站|đứng; ga, trạm|v|7
+照顾|chăm sóc|v|13|zhàogu
+照片|bức ảnh|n|10
+照相机|máy ảnh|n|10
+着急|sốt ruột, cuống lên|a|19
+只|chỉ; con (lượng từ động vật)|d|15
+中间|ở giữa, giữa|f|17
+终于|cuối cùng, rốt cuộc|d|15
+种|loại, giống; trồng|q|3
+重要|quan trọng|a|14
+周末|cuối tuần|t|4
+主要|chủ yếu|a|14
+注意|chú ý|v|13
+祝|chúc|v|1
+字典|từ điển chữ|n|8
+自己|bản thân, tự mình|r|2
+总是|luôn luôn|d|15
+最近|gần đây|t|4
+作业|bài tập về nhà|n|8
+作用|tác dụng|n|14

@@ -12,7 +12,8 @@
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
     "prisma:seed": "tsx prisma/seed.ts",
-    "test": "tsx --test tests/pure.test.ts tests/ai.test.ts tests/ai-unconfigured.test.ts"
+    "prisma:enrich": "tsx prisma/enrichVocabulary.ts",
+    "test": "tsx --test tests/pure.test.ts tests/ai.test.ts tests/ai-unconfigured.test.ts tests/catalog.test.ts tests/enrichment.test.ts"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"

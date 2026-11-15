@@ -1,5 +1,7 @@
 import { prisma } from "../config/prisma";
 import { UserVocabulary, Vocabulary } from "@prisma/client";
+import { scopeWhere } from "./catalog.service";
+import type { ScopeInput } from "../validators/catalog.validator";
 
 export type MixedItem = UserVocabulary & { vocabulary: Vocabulary };
 
@@ -171,6 +173,42 @@ export async function buildSavedSentenceSession(
     newWordsCount: items.filter(isNew).length,
     dueWordsCount: items.filter(isDue).length,
     weakWordsCount: items.filter((i) => !isNew(i) && !isDue(i) && i.incorrectCount >= WEAK_INCORRECT_THRESHOLD).length,
+  };
+}
+
+/**
+ * Phiên luyện tập theo một "bộ từ" (cấp độ HSK / chủ đề / trình độ): chỉ lấy từ user ĐÃ thêm vào danh sách học.
+ * Ưu tiên: đến hạn ôn → từ yếu → từ mới → còn lại; trong mỗi nhóm chọn ngẫu nhiên, thứ tự hiển thị cuối được xáo trộn.
+ */
+export async function buildScopedSession(
+  userId: string,
+  scope: ScopeInput,
+  sessionSize: number = DEFAULT_SESSION_SIZE
+): Promise<MixedSessionComposition> {
+  const now = new Date();
+  const rows: MixedItem[] = await prisma.userVocabulary.findMany({
+    where: { userId, vocabulary: scopeWhere(scope) },
+    include: { vocabulary: true },
+  });
+
+  const isDue = (w: MixedItem) => w.lastReviewedAt !== null && w.nextReviewAt !== null && w.nextReviewAt <= now;
+  const isWeak = (w: MixedItem) => w.incorrectCount >= WEAK_INCORRECT_THRESHOLD;
+
+  const due = rows.filter(isDue);
+  const weak = rows.filter((w) => !isDue(w) && isWeak(w));
+  const fresh = rows.filter((w) => !isDue(w) && !isWeak(w) && w.status === "new");
+  const rest = rows.filter((w) => !isDue(w) && !isWeak(w) && w.status !== "new");
+
+  [due, weak, fresh, rest].forEach((g) => shuffleInPlace(g));
+  const items = [...due, ...weak, ...fresh, ...rest].slice(0, sessionSize);
+  const picked = new Set(items.map((i) => i.id));
+  shuffleInPlace(items);
+
+  return {
+    items,
+    newWordsCount: fresh.filter((w) => picked.has(w.id)).length,
+    dueWordsCount: due.filter((w) => picked.has(w.id)).length,
+    weakWordsCount: weak.filter((w) => picked.has(w.id)).length,
   };
 }
 

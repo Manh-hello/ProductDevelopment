@@ -31,3 +31,11 @@ Frontend hiện tại (`frontend/`, package `hanzi-srs`) là UI **tĩnh, chưa g
 5. **Cập nhật hồ sơ**: cần thêm `PUT /auth/me` để trang Settings lưu được `dailyGoal`/`displayName`/`avatarUrl` (hiện chỉ đọc được qua `GET /auth/me`).
 
 Không có gap nào phá vỡ phần đã làm — tất cả là **bổ sung thêm**, phần Auth/Vocabulary/Practice (MVP)/Dashboard/Achievements cơ bản đã hoạt động đầy đủ với schema MySQL hiện tại.
+
+## Thư viện từ vựng (catalog)
+
+| Màn hình | API | Ghi chú |
+|---|---|---|
+| `/` (khối Thư viện), Dashboard (khối cuối trang), `/library` | `GET /catalog/overview`, `GET /catalog/words`, `GET /catalog/words/:id`, `POST /catalog/enroll` | Dữ liệu thật từ DB; công khai, đăng nhập thì kèm tiến độ. Bấm một từ mở popup chi tiết. |
+| `/learn`, `/practice/set` | `POST /practice/sessions` với `scope` | Học (thẻ ghi nhớ) / luyện tập (trắc nghiệm, đảo ngược, Pinyin) theo bộ từ qua `?level=`, `?topic=`, `?band=` |
+

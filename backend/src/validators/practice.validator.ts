@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { ALL_EXERCISE_TYPE_KEYS } from "../constants/exerciseTypes";
+import { scopeSchema } from "./catalog.validator";
 
 const exerciseTypeEnum = z.enum(ALL_EXERCISE_TYPE_KEYS as [string, ...string[]]);
 
@@ -10,6 +11,8 @@ export const startSessionSchema = z.object({
   exerciseTypes: z.array(exerciseTypeEnum).min(1).max(20).optional(),
   /** `saved`: chỉ luyện các từ mà bạn đã lưu câu (có bản dịch), dùng chính các câu đó làm câu nền. */
   sentenceSource: z.enum(["saved"]).optional(),
+  /** Chỉ luyện các từ TRONG DANH SÁCH HỌC của bạn thuộc bộ này (cấp độ HSK / chủ đề / trình độ). */
+  scope: scopeSchema.optional(),
 });
 
 export const submitAnswerSchema = z

@@ -31,6 +31,9 @@ import StatisticsPage from './pages/StatisticsPage';
 import AchievementsPage from './pages/AchievementsPage';
 import NotificationsPage from './pages/NotificationsPage';
 import SettingsPage from './pages/SettingsPage';
+import LibraryPage from './pages/LibraryPage';
+import LearnPage from './pages/LearnPage';
+import SetPracticePage from './pages/SetPracticePage';
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -47,7 +50,10 @@ export default function App() {
       <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/auth" element={<AuthPage />} />
+        <Route path="/library" element={<LibraryPage />} />
         <Route element={<RequireAuth><Outlet /></RequireAuth>}>
+          <Route path="/learn" element={<LearnPage />} />
+          <Route path="/practice/set" element={<SetPracticePage />} />
           <Route path="/practice/multi" element={<MultiPracticePage />} />
           <Route path="/sentences" element={<SentencePracticePage />} />
           <Route path="/practice/saved-sentences" element={<SavedSentencesPracticePage />} />

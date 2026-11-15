@@ -56,6 +56,26 @@ model Vocabulary {
   partOfSpeech String? @map("part_of_speech") @db.VarChar(50)
   notes        String? @db.Text
 
+  // ---- Dữ liệu làm giàu (AI sinh bằng `npm run prisma:enrich`, người dùng/admin có thể sửa) ----
+  /// Âm Hán Việt, vd 学校 → "học hiệu".
+  hanViet      String? @map("han_viet") @db.VarChar(100)
+  /// Dạng phồn thể, chỉ có khi khác giản thể.
+  traditional  String? @db.VarChar(50)
+  /// Lượng từ đi kèm (danh từ), vd "个", "本".
+  measureWord  String? @map("measure_word") @db.VarChar(100)
+  /// Cách dùng / cấu trúc ngữ pháp thường gặp (tiếng Việt).
+  usage        String? @db.Text
+  /// [{ word, pinyin, note }]
+  synonyms     Json?
+  /// [{ word, pinyin, note }]
+  antonyms     Json?
+  /// [{ phrase, pinyin, meaning }]
+  collocations Json?
+  /// Thời điểm AI làm giàu xong (null = chưa làm; script dựa vào đây để chạy tiếp, không làm lại).
+  enrichedAt   DateTime? @map("enriched_at")
+  /// "provider:model" đã sinh dữ liệu, để truy vết chất lượng.
+  enrichedBy   String? @map("enriched_by") @db.VarChar(80)
+
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
@@ -67,6 +87,7 @@ model Vocabulary {
 
   @@index([hanzi])
   @@index([pinyin])
+  @@index([enrichedAt])
   @@map("vocabularies")
 }
 
@@ -79,6 +100,10 @@ model VocabularyExample {
   sentencePinyin String @map("sentence_pinyin") @db.VarChar(500)
   sentenceMeaning String @map("sentence_meaning") @db.VarChar(500)
   audioUrl       String? @map("audio_url") @db.VarChar(500)
+  /// Giải thích ngắn (tiếng Việt) về cách dùng từ trong câu.
+  explanation    String? @db.Text
+  /// Nguồn câu: manual | seed | ai
+  source         String  @default("manual") @db.VarChar(20)
 
   vocabulary Vocabulary @relation(fields: [vocabularyId], references: [id], onDelete: Cascade)
 

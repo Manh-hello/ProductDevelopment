@@ -83,6 +83,7 @@ npm run dev
 | `DATABASE_URL`   | MySQL connection string (ví dụ `mysql://user:password@localhost:3306/chinese_vocabulary`) |
 | `JWT_SECRET`     | Secret ký JWT — **sẽ dùng từ Phase 3**, cần khai báo sẵn                                  |
 | `JWT_EXPIRES_IN` | Thời hạn token JWT (ví dụ `7d`)                                                           |
+| `AI_PROVIDER`, `AI_API_KEY`, `AI_MODEL`, `AI_BASE_URL`, `AI_TIMEOUT_MS` | _(tuỳ chọn)_ Cấu hình AI tra cứu từ & tạo câu — xem [docs/setup.md](docs/setup.md) |
 
 **frontend/.env**
 
@@ -116,7 +117,8 @@ npm run dev
 - [ ] Spaced Repetition
 - [x] Listening
 - [ ] Speaking
-- [ ] AI (tạo bài tập, phân tích từ vựng)
+- [x] AI: tra cứu từ vựng, tạo câu từ vốn từ cá nhân, luyện từ câu đã lưu _(cần cấu hình `AI_*`)_
+- [ ] AI chấm câu tự đặt
 - [ ] Statistics
 - [ ] Gamification
 

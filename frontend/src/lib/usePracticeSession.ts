@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { practiceApi } from '../api';
+import type { CatalogScope } from '../api';
 import { ApiError } from './api';
 import { useAuth } from './auth';
 import type { AnswerResult, Question, SessionCompletion, StartedSession } from './types';
@@ -10,6 +11,8 @@ export interface PracticeConfig {
   size?: number;
   /** `saved`: luyện từ các câu đã lưu (có bản dịch) của bạn. */
   sentenceSource?: 'saved';
+  /** Chỉ luyện các từ đã thêm thuộc bộ này (cấp độ HSK / chủ đề / trình độ). */
+  scope?: CatalogScope;
 }
 
 export type Phase = 'loading' | 'error' | 'question' | 'feedback' | 'finishing';
@@ -42,7 +45,7 @@ export default function usePracticeSession(config: PracticeConfig) {
     setPhase('loading');
     setError(null);
     try {
-      const s = await practiceApi.start({ sessionType: config.sessionType, sessionSize: config.size, exerciseTypes: config.exerciseTypes, sentenceSource: config.sentenceSource });
+      const s = await practiceApi.start({ sessionType: config.sessionType, sessionSize: config.size, exerciseTypes: config.exerciseTypes, sentenceSource: config.sentenceSource, scope: config.scope });
       setSession(s);
       setIndex(0);
       setResult(null);
@@ -56,7 +59,7 @@ export default function usePracticeSession(config: PracticeConfig) {
       setPhase('error');
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [config.sessionType, config.size, config.sentenceSource, JSON.stringify(config.exerciseTypes)]);
+  }, [config.sessionType, config.size, config.sentenceSource, JSON.stringify(config.exerciseTypes), JSON.stringify(config.scope)]);
 
   useEffect(() => {
     if (started.current) return;

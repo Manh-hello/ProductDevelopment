@@ -14,6 +14,11 @@ const NAV_ITEMS: NavItem[] = [
     icon: 'auto_stories',
   },
   {
+    key: 'library',
+    label: 'Thư Viện Từ Vựng HSK',
+    icon: 'library_books',
+  },
+  {
     key: 'practice',
     label: 'Luyện Tập',
     icon: 'model_training',

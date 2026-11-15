@@ -2,7 +2,7 @@ import { prisma } from "../config/prisma";
 import { AppError } from "../utils/AppError";
 import { DEFAULT_XP_PER_CORRECT_ANSWER, XP_DAILY_REVIEW_COMPLETION_BONUS, XP_PER_CORRECT_ANSWER } from "../constants/xp";
 import { addDays, startOfDay } from "../utils/dates";
-import { buildDailyReviewSession, buildMixedSession, buildSavedSentenceSession } from "./mixing.service";
+import { buildDailyReviewSession, buildMixedSession, buildSavedSentenceSession, buildScopedSession } from "./mixing.service";
 import { ensureExercises, generateQuestionsForItems, resolveExerciseTypes } from "./exercise.service";
 import { computeSm2, SM2_DEFAULTS } from "./srs.service";
 import { evaluateAnswer } from "./answer.service";
@@ -16,14 +16,18 @@ const MASTERED_REPETITION_THRESHOLD = 5;
 const FALLBACK_ATTEMPT_MS = 15_000;
 const MAX_ATTEMPT_MS = 120_000;
 
-export async function startSession(userId: string, input: Pick<StartSessionInput, "sessionType" | "sessionSize" | "exerciseTypes" | "sentenceSource">) {
+export async function startSession(userId: string, input: Pick<StartSessionInput, "sessionType" | "sessionSize" | "exerciseTypes" | "sentenceSource" | "scope">) {
   const { sessionType, sessionSize } = input;
   const exerciseTypes = resolveExerciseTypes(input.exerciseTypes);
   const fromSaved = input.sentenceSource === "saved";
 
+  const hasScope = Boolean(input.scope && (input.scope.level || input.scope.topic || input.scope.band));
+
   const composition = fromSaved
     ? await buildSavedSentenceSession(userId, sessionSize)
-    : sessionType === "daily_review"
+    : hasScope
+      ? await buildScopedSession(userId, input.scope!, sessionSize)
+      : sessionType === "daily_review"
       ? await buildDailyReviewSession(userId, sessionSize)
       : await buildMixedSession(userId, sessionSize);
 
@@ -31,7 +35,9 @@ export async function startSession(userId: string, input: Pick<StartSessionInput
     throw new AppError(
       fromSaved
         ? "Bạn chưa lưu câu nào có bản dịch để luyện tập. Hãy tạo và lưu câu ở mục Luyện Câu trước."
-        : "Chưa có từ vựng nào để luyện tập. Hãy thêm từ vào danh sách học trước.",
+        : hasScope
+          ? "Bạn chưa có từ nào thuộc bộ này trong danh sách học. Hãy bấm \"Học bộ này\" ở Thư viện từ vựng trước."
+          : "Chưa có từ vựng nào để luyện tập. Hãy thêm từ vào danh sách học trước.",
       400
     );
   }

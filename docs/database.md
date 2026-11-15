@@ -50,3 +50,7 @@ erDiagram
 - **SM-2** (`services/srs.service.ts`): quality 0–5 (MVP: đúng→4, sai→2). Đúng: lần 1→1 ngày, lần 2→6 ngày, sau đó `interval × ease_factor`; sai: reset về 1 ngày. `ease_factor` tối thiểu 1.3.
 - **Mixing Engine** (`services/mixing.service.ts`): `mixed` = 20% mới / 50% đến hạn / 30% từ yếu (`incorrect_count ≥ 2`), thiếu nhóm nào thì bù nhóm khác; `daily_review` ưu tiên tuyệt đối từ đến hạn. Chỉ *thứ tự* hiển thị được xáo trộn.
 - **Mastery**: `mastery_level` 0–5 (tăng khi nhớ, giảm khi quên); đạt 5 → `status = mastered`.
+
+## Dữ liệu làm giàu từ vựng (AI)
+
+Bảng `vocabularies` có thêm: `han_viet` (âm Hán Việt), `traditional` (phồn thể), `measure_word` (lượng từ), `usage` (cách dùng), `synonyms` / `antonyms` / `collocations` (JSON), `enriched_at` / `enriched_by` (truy vết; `enriched_at IS NULL` = chưa làm giàu). Bảng `vocabulary_examples` có thêm `explanation` (giải thích cách dùng) và `source` (`manual` | `seed` | `ai`). Sinh bằng `npm run prisma:enrich` (xem docs/setup.md); pinyin của câu/cụm từ luôn do `pinyin-pro` tạo, không lấy từ AI.

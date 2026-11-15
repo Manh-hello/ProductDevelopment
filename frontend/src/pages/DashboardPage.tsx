@@ -3,6 +3,7 @@ import { dashboardApi } from '../api';
 import { useAuth } from '../lib/auth';
 import useApi from '../lib/useApi';
 import AppShell from '../layouts/AppShell';
+import LibrarySection from '../components/library/LibrarySection';
 
 export default function DashboardPage() {
   const navigate = useNavigate();
@@ -443,53 +444,7 @@ export default function DashboardPage() {
             </div>
           </div>
         </section>
-        <section className="grid grid-cols-1 md:grid-cols-3 gap-gutter-sm">
-          <div className="relative overflow-hidden rounded-xl bg-surface-container-lowest p-space-md shadow-sm flex items-center gap-space-md">
-            <div className="relative w-16 h-20 bg-surface-container-low rounded-lg flex flex-col items-center justify-center shrink-0">
-              <span className="font-display-character text-[36px] text-primary leading-none">学</span>
-              <span className="font-label-sm text-[10px] text-on-surface-variant mt-1">HỌC</span>
-            </div>
-            <div className="flex flex-col">
-              <span className="font-label-sm text-label-sm text-primary uppercase font-bold tracking-wider">
-                Hán Tự Cốt Lõi
-              </span>
-              <span className="font-title-sm text-title-sm font-bold text-on-surface">xué • 8 nét</span>
-              <span className="font-body-sm text-body-sm text-on-surface-variant mt-0.5">
-                Bộ Tử (子) phía dưới, mô phỏng đứa trẻ học dưới mái nhà.
-              </span>
-            </div>
-          </div>
-          <div className="relative overflow-hidden rounded-xl bg-surface-container-lowest p-space-md shadow-sm flex items-center gap-space-md">
-            <div className="relative w-16 h-20 bg-surface-container-low rounded-lg flex flex-col items-center justify-center shrink-0">
-              <span className="font-display-character text-[36px] text-on-surface leading-none">语</span>
-              <span className="font-label-sm text-[10px] text-on-surface-variant mt-1">NGỮ</span>
-            </div>
-            <div className="flex flex-col">
-              <span className="font-label-sm text-label-sm text-secondary uppercase font-bold tracking-wider">
-                Bộ Thủ Quan Trọng
-              </span>
-              <span className="font-title-sm text-title-sm font-bold text-on-surface">yǔ • Bộ Ngôn (讠)</span>
-              <span className="font-body-sm text-body-sm text-on-surface-variant mt-0.5">
-                Xuất hiện trong hơn 38 từ vựng đang học tại HSK 2-3.
-              </span>
-            </div>
-          </div>
-          <div className="relative overflow-hidden rounded-xl bg-surface-container-lowest p-space-md shadow-sm flex items-center gap-space-md">
-            <div className="relative w-16 h-20 bg-surface-container-low rounded-lg flex flex-col items-center justify-center shrink-0">
-              <span className="font-display-character text-[36px] text-tertiary leading-none">习</span>
-              <span className="font-label-sm text-[10px] text-on-surface-variant mt-1">TẬP</span>
-            </div>
-            <div className="flex flex-col">
-              <span className="font-label-sm text-label-sm text-tertiary uppercase font-bold tracking-wider">
-                SRS Mnemonic
-              </span>
-              <span className="font-title-sm text-title-sm font-bold text-on-surface">xí • Luyện tập</span>
-              <span className="font-body-sm text-body-sm text-on-surface-variant mt-0.5">
-                Chim non vỗ cánh nhiều lần trên tổ để học bay thành thạo.
-              </span>
-            </div>
-          </div>
-        </section>
+        <LibrarySection embedded />
       </div>
     </AppShell>
   );
