@@ -90,7 +90,7 @@ async function assertCanModify(userId: string, vocabularyId: string) {
  */
 const NULLABLE_TEXT_FIELDS = ["pronunciation", "audioUrl", "level", "partOfSpeech", "notes"] as const;
 function blankToNull<T extends object>(data: T): T {
-  const out: Record<string, unknown> = { ...data };
+  const out: Record<string, unknown> = Object.fromEntries(Object.entries(data));
   for (const k of NULLABLE_TEXT_FIELDS) if (out[k] === "") out[k] = null;
   return out as T;
 }
