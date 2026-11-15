@@ -1,11 +1,12 @@
 import { useLocation } from 'react-router-dom';
 
-export type NavKey = 'dashboard' | 'vocabulary' | 'practice' | 'sentences' | 'statistics' | 'achievements' | 'settings';
+export type NavKey = 'dashboard' | 'vocabulary' | 'library' | 'practice' | 'sentences' | 'statistics' | 'achievements' | 'settings';
 
 /** Route đích của từng mục sidebar. */
 export const NAV_ROUTES: Record<NavKey, string> = {
   dashboard: '/dashboard',
   vocabulary: '/vocabulary',
+  library: '/library',
   practice: '/practice',
   sentences: '/sentences',
   statistics: '/statistics',
@@ -17,6 +18,8 @@ export const NAV_ROUTES: Record<NavKey, string> = {
 const OWNERS: [prefix: string, key: NavKey][] = [
   ['/dashboard', 'dashboard'],
   ['/vocabulary', 'vocabulary'],
+  ['/library', 'library'],
+  ['/learn', 'library'],
   ['/practice', 'practice'],
   ['/review', 'practice'],
   ['/sentences', 'sentences'],

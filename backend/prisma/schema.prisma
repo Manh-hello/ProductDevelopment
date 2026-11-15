@@ -22,6 +22,9 @@ model User {
   displayName  String   @map("display_name") @db.VarChar(100)
   avatarUrl    String?  @map("avatar_url") @db.VarChar(500)
 
+  /// Tuỳ chọn cá nhân (thuật toán, giao diện, âm thanh, level khởi điểm...) - JSON tự do, validate ở tầng service.
+  settings      Json?
+
   dailyGoal     Int @default(20) @map("daily_goal")
   currentStreak Int @default(0) @map("current_streak")
   longestStreak Int @default(0) @map("longest_streak")
@@ -36,6 +39,7 @@ model User {
   dailyStatistics  DailyStatistic[]
   xpTransactions   XpTransaction[]
   studySessions    StudySession[]
+  notifications    Notification[]
 
   @@map("users")
 }
@@ -52,6 +56,26 @@ model Vocabulary {
   partOfSpeech String? @map("part_of_speech") @db.VarChar(50)
   notes        String? @db.Text
 
+  // ---- Dữ liệu làm giàu (AI sinh bằng `npm run prisma:enrich`, người dùng/admin có thể sửa) ----
+  /// Âm Hán Việt, vd 学校 → "học hiệu".
+  hanViet      String? @map("han_viet") @db.VarChar(100)
+  /// Dạng phồn thể, chỉ có khi khác giản thể.
+  traditional  String? @db.VarChar(50)
+  /// Lượng từ đi kèm (danh từ), vd "个", "本".
+  measureWord  String? @map("measure_word") @db.VarChar(100)
+  /// Cách dùng / cấu trúc ngữ pháp thường gặp (tiếng Việt).
+  usage        String? @db.Text
+  /// [{ word, pinyin, note }]
+  synonyms     Json?
+  /// [{ word, pinyin, note }]
+  antonyms     Json?
+  /// [{ phrase, pinyin, meaning }]
+  collocations Json?
+  /// Thời điểm AI làm giàu xong (null = chưa làm; script dựa vào đây để chạy tiếp, không làm lại).
+  enrichedAt   DateTime? @map("enriched_at")
+  /// "provider:model" đã sinh dữ liệu, để truy vết chất lượng.
+  enrichedBy   String? @map("enriched_by") @db.VarChar(80)
+
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
@@ -63,6 +87,7 @@ model Vocabulary {
 
   @@index([hanzi])
   @@index([pinyin])
+  @@index([enrichedAt])
   @@map("vocabularies")
 }
 
@@ -75,6 +100,10 @@ model VocabularyExample {
   sentencePinyin String @map("sentence_pinyin") @db.VarChar(500)
   sentenceMeaning String @map("sentence_meaning") @db.VarChar(500)
   audioUrl       String? @map("audio_url") @db.VarChar(500)
+  /// Giải thích ngắn (tiếng Việt) về cách dùng từ trong câu.
+  explanation    String? @db.Text
+  /// Nguồn câu: manual | seed | ai
+  source         String  @default("manual") @db.VarChar(20)
 
   vocabulary Vocabulary @relation(fields: [vocabularyId], references: [id], onDelete: Cascade)
 
@@ -125,6 +154,10 @@ model UserVocabulary {
   reviewCount    Int @default(0) @map("review_count")
   correctCount   Int @default(0) @map("correct_count")
   incorrectCount Int @default(0) @map("incorrect_count")
+
+  /// Ghi chú / mẹo nhớ RIÊNG của user (khác vocabularies.notes là dữ liệu dùng chung).
+  note     String? @db.Text
+  mnemonic String? @db.Text
 
   learnedAt      DateTime? @map("learned_at")
   lastReviewedAt DateTime? @map("last_reviewed_at")
@@ -179,6 +212,20 @@ model UserSentence {
   correction   String? @db.Text
   /// "pending" | "reviewed"
   status       String  @default("pending") @db.VarChar(20)
+
+  /// --- Câu do hệ thống sinh (AI / từ câu ví dụ có sẵn) mà user đã LƯU. Câu tự viết để các cột này null/mặc định. ---
+  /// Bản dịch tiếng Việt - có giá trị thì câu dùng được cho các dạng bài dịch/điền từ/sắp xếp (xem exercise.service.ts).
+  translation  String? @db.VarChar(500)
+  /// Giải thích ngắn về ngữ pháp/cách dùng.
+  explanation  String? @db.Text
+  topic        String? @db.VarChar(50)
+  /// Trình độ ƯỚC LƯỢNG (vd "HSK 2"), không phải dữ liệu đã xác minh.
+  level        String? @db.VarChar(20)
+  /// "manual" (user tự viết) | "ai" | "existing" (lấy từ câu ví dụ có sẵn)
+  source       String  @default("manual") @db.VarChar(20)
+  /// Các từ trong danh sách học của user thực sự xuất hiện trong câu: [{ vocabularyId, hanzi, role: "target" | "known" }].
+  /// `vocabularyId` ở trên là từ mục tiêu CHÍNH (dùng cho bài luyện và SRS).
+  usedWords    Json?   @map("used_words")
 
   createdAt DateTime @default(now()) @map("created_at")
 
@@ -323,4 +370,29 @@ model XpTransaction {
 
   @@index([userId, createdAt])
   @@map("xp_transactions")
+}
+
+// ==================================================
+// THÔNG BÁO
+// ==================================================
+
+/// Thông báo trong ứng dụng (nhắc ôn SRS, mở khoá thành tích, tổng kết phiên...).
+model Notification {
+  id       String  @id @default(uuid()) @db.Char(36)
+  userId   String  @map("user_id") @db.Char(36)
+  /// "srs" | "achievement" | "ai" | "system"
+  category String  @db.VarChar(30)
+  title    String  @db.VarChar(200)
+  body     String? @db.Text
+  /// Route nội bộ của frontend để điều hướng khi bấm vào thông báo, vd "/review".
+  link     String? @db.VarChar(200)
+  isRead   Boolean @default(false) @map("is_read")
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, isRead])
+  @@index([userId, createdAt])
+  @@map("notifications")
 }

@@ -1,5 +1,7 @@
 # Mapping Frontend (hanzi-srs) ↔ Backend API
 
+> **Cập nhật (tính năng AI):** nội dung bên dưới là bản cũ khi frontend còn tĩnh — mã nguồn hiện nay đã nối API (xem `frontend/src/api/index.ts`). Phần đã nối thêm: `/vocabulary/new` → `POST /vocabularies/ai-lookup`; `/sentences` → `POST /user-sentences/generate`, `POST /user-sentences`; `/practice/saved-sentences` (mới) → `POST /practice/sessions` với `sentenceSource: "saved"`; `/vocabulary/:id` có nút "Tạo câu với từ này" → `/sentences?word=<id>`.
+
 Frontend hiện tại (`frontend/`, package `hanzi-srs`) là UI **tĩnh, chưa gọi API nào** (không có `fetch`/`axios`/biến môi trường trong code — dữ liệu là mock cứng trong từng trang, trạng thái tạm lưu qua `useStoredState` = localStorage). Bảng dưới đây map từng trang tới API đã có sẵn, để việc nối API thật sau này chỉ còn là thay `ROWS`/mock bằng kết quả `fetch`, không cần đổi lại thiết kế.
 
 | Trang (route) | API tương ứng | Trạng thái |
@@ -29,3 +31,11 @@ Frontend hiện tại (`frontend/`, package `hanzi-srs`) là UI **tĩnh, chưa g
 5. **Cập nhật hồ sơ**: cần thêm `PUT /auth/me` để trang Settings lưu được `dailyGoal`/`displayName`/`avatarUrl` (hiện chỉ đọc được qua `GET /auth/me`).
 
 Không có gap nào phá vỡ phần đã làm — tất cả là **bổ sung thêm**, phần Auth/Vocabulary/Practice (MVP)/Dashboard/Achievements cơ bản đã hoạt động đầy đủ với schema MySQL hiện tại.
+
+## Thư viện từ vựng (catalog)
+
+| Màn hình | API | Ghi chú |
+|---|---|---|
+| `/` (khối Thư viện), Dashboard (khối cuối trang), `/library` | `GET /catalog/overview`, `GET /catalog/words`, `GET /catalog/words/:id`, `POST /catalog/enroll` | Dữ liệu thật từ DB; công khai, đăng nhập thì kèm tiến độ. Bấm một từ mở popup chi tiết. |
+| `/learn`, `/practice/set` | `POST /practice/sessions` với `scope` | Học (thẻ ghi nhớ) / luyện tập (trắc nghiệm, đảo ngược, Pinyin) theo bộ từ qua `?level=`, `?topic=`, `?band=` |
+

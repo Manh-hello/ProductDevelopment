@@ -8,7 +8,7 @@ async function main(): Promise<void> {
   // Kiểm tra kết nối database ngay khi start, fail sớm nếu DB không sẵn sàng
   // thay vì để lỗi xuất hiện muộn ở request đầu tiên.
   await prisma.$connect();
-  console.log("✅ Kết nối PostgreSQL thành công.");
+  console.log("✅ Kết nối MySQL thành công.");
 
   app.listen(env.PORT, () => {
     console.log(`🚀 Backend đang chạy tại http://localhost:${env.PORT}`);

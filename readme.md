@@ -77,12 +77,13 @@ npm run dev
 
 **backend/.env**
 
-| Biến             | Ý nghĩa                                                  |
-| ---------------- | -------------------------------------------------------- |
-| `PORT`           | Port backend lắng nghe (mặc định `5000`)                 |
+| Biến             | Ý nghĩa                                                                                   |
+| ---------------- | ----------------------------------------------------------------------------------------- |
+| `PORT`           | Port backend lắng nghe (mặc định `5000`)                                                  |
 | `DATABASE_URL`   | MySQL connection string (ví dụ `mysql://user:password@localhost:3306/chinese_vocabulary`) |
-| `JWT_SECRET`     | Secret ký JWT — **sẽ dùng từ Phase 3**, cần khai báo sẵn |
-| `JWT_EXPIRES_IN` | Thời hạn token JWT (ví dụ `7d`)                          |
+| `JWT_SECRET`     | Secret ký JWT — **sẽ dùng từ Phase 3**, cần khai báo sẵn                                  |
+| `JWT_EXPIRES_IN` | Thời hạn token JWT (ví dụ `7d`)                                                           |
+| `AI_PROVIDER`, `AI_API_KEY`, `AI_MODEL`, `AI_BASE_URL`, `AI_TIMEOUT_MS` | _(tuỳ chọn)_ Cấu hình AI tra cứu từ & tạo câu — xem [docs/setup.md](docs/setup.md) |
 
 **frontend/.env**
 
@@ -110,13 +111,14 @@ npm run dev
 - [x] Prisma migration _(chạy trên máy dev — xem lưu ý ở báo cáo Phase 2)_
 - [x] Prisma seed (10 từ cơ bản)
 - [x] Health check (`GET /api/health`)
-- [ ] Authentication (JWT)
-- [ ] Vocabulary CRUD
-- [ ] Exercise Engine
+- [x] Authentication (JWT)
+- [x] Vocabulary CRUD
+- [x] Exercise Engine
 - [ ] Spaced Repetition
-- [ ] Listening
+- [x] Listening
 - [ ] Speaking
-- [ ] AI (tạo bài tập, phân tích từ vựng)
+- [x] AI: tra cứu từ vựng, tạo câu từ vốn từ cá nhân, luyện từ câu đã lưu _(cần cấu hình `AI_*`)_
+- [ ] AI chấm câu tự đặt
 - [ ] Statistics
 - [ ] Gamification
 

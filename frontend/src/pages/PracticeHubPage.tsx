@@ -572,7 +572,7 @@ export default function PracticeHubPage() {
                   </span>
                   <span className="font-body-sm text-body-sm text-on-surface-variant truncate">
                     {' '}
-                    8 từ nhầm lẫn cần khắc phục{' '}
+                    Các từ hay nhầm lẫn cần khắc phục{' '}
                   </span>
                 </div>
               </div>

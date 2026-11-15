@@ -1,5 +1,6 @@
 import NavLinks, { type NavItem, type NavStyle } from './NavLinks';
 import { useActiveNavKey } from './navigation';
+import { useAuth } from '../lib/auth';
 
 const NAV_ITEMS: NavItem[] = [
   {
@@ -11,6 +12,11 @@ const NAV_ITEMS: NavItem[] = [
     key: 'vocabulary',
     label: 'Kho Từ Vựng Cá Nhân',
     icon: 'auto_stories',
+  },
+  {
+    key: 'library',
+    label: 'Thư Viện Từ Vựng HSK',
+    icon: 'library_books',
   },
   {
     key: 'practice',
@@ -48,6 +54,9 @@ const NAV_STYLE: NavStyle = {
 };
 
 export default function Sidebar() {
+  const { summary } = useAuth();
+  const total = Math.max(summary?.totalWords ?? 0, 1);
+  const pct = (n: number | undefined) => `${Math.round(((n ?? 0) / total) * 100)}%`;
   const active = useActiveNavKey();
   return (
     <aside className="fixed left-0 top-0 h-full w-72 bg-surface-container-low z-50 flex flex-col justify-between py-space-lg px-gutter-sm shadow-[0_1px_8px_rgba(0,0,0,0.04)]">
@@ -80,17 +89,17 @@ export default function Sidebar() {
             <span className="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">
               Độ thuần thục SRS
             </span>
-            <span className="font-label-sm text-label-sm font-bold text-secondary">68%</span>
+            <span className="font-label-sm text-label-sm font-bold text-secondary">{pct(summary?.masteredWords)}</span>
           </div>
           <div className="w-full h-2 rounded-full bg-surface-container-highest overflow-hidden flex">
-            <div className="h-full bg-secondary-fixed-dim" style={{ width: '25%' }}></div>
-            <div className="h-full bg-secondary" style={{ width: '35%' }}></div>
-            <div className="h-full bg-tertiary" style={{ width: '20%' }}></div>
-            <div className="h-full bg-primary" style={{ width: '20%' }}></div>
+            <div className="h-full bg-secondary-fixed-dim" style={{ width: pct(summary?.newWords) }}></div>
+            <div className="h-full bg-secondary" style={{ width: pct(Math.max((summary?.learningWords ?? 0) - (summary?.dueWords ?? 0), 0)) }}></div>
+            <div className="h-full bg-tertiary" style={{ width: pct(summary?.dueWords) }}></div>
+            <div className="h-full bg-primary" style={{ width: pct(summary?.masteredWords) }}></div>
           </div>
           <div className="flex items-center justify-between text-on-surface-variant font-label-sm text-label-sm mt-1">
-            <span>HSK 1-6</span>
-            <span>1,842 Từ Đã Nhớ</span>
+            <span>{summary?.totalWords ?? 0} từ trong kho</span>
+            <span>{summary?.masteredWords ?? 0} Từ Đã Nhớ</span>
           </div>
         </div>
       </div>
