@@ -5,7 +5,7 @@ import {
   ListVocabularyQuery,
   UpdateVocabularyInput,
 } from "../validators/vocabulary.validator";
-import { addVocabularyToUser, countOtherLearners } from "./userVocabulary.service";
+import { addVocabularyToUser } from "./userVocabulary.service";
 
 export const INCLUDE_RELATIONS = {
   examples: true,
@@ -78,26 +78,14 @@ export async function getVocabularyById(id: string) {
  * để một tài khoản không thể làm hỏng dữ liệu học của người khác.
  */
 async function assertCanModify(userId: string, vocabularyId: string) {
-  const others = await countOtherLearners(userId, vocabularyId);
+  const others = await prisma.userVocabulary.count({ where: { vocabularyId, userId: { not: userId } } });
   if (others > 0) {
     throw new AppError("Từ này đang được người dùng khác sử dụng nên bạn không thể sửa/xoá bản gốc. Hãy xoá nó khỏi danh sách học của bạn.", 403);
   }
 }
 
-/**
- * Form gửi chuỗi rỗng khi người dùng xoá trắng một ô. Với các cột cho phép NULL, lưu `null` thay vì "" (và để
- * PUT thật sự xoá được giá trị cũ — trước đây client bỏ trường rỗng nên không thể xoá ghi chú/cấp độ/từ loại).
- */
-const NULLABLE_TEXT_FIELDS = ["pronunciation", "audioUrl", "level", "partOfSpeech", "notes"] as const;
-function blankToNull<T extends object>(data: T): T {
-  const out: Record<string, unknown> = Object.fromEntries(Object.entries(data));
-  for (const k of NULLABLE_TEXT_FIELDS) if (out[k] === "") out[k] = null;
-  return out as T;
-}
-
 export async function createVocabulary(userId: string, input: CreateVocabularyInput) {
-  const { examples, tags, addToMyList, initialStage, reviewNow, ...rest } = input;
-  const data = blankToNull(rest);
+  const { examples, tags, addToMyList, initialStage, reviewNow, ...data } = input;
 
   // Chặn bản ghi trùng hoàn toàn (cùng Hán tự + Pinyin + nghĩa) - người dùng nên thêm từ có sẵn vào danh sách thay vì tạo bản sao.
   const duplicate = await prisma.vocabulary.findFirst({ where: { hanzi: data.hanzi, pinyin: data.pinyin, meaning: data.meaning }, select: { id: true } });
@@ -123,8 +111,7 @@ export async function createVocabulary(userId: string, input: CreateVocabularyIn
 export async function updateVocabulary(userId: string, id: string, input: UpdateVocabularyInput) {
   await getVocabularyById(id);
   await assertCanModify(userId, id);
-  const { examples, tags, ...rest } = input;
-  const data = blankToNull(rest);
+  const { examples, tags, ...data } = input;
 
   const updated = await prisma.vocabulary.update({
     where: { id },

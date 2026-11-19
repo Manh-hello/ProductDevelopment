@@ -1,6 +1,7 @@
 import { createApp } from "./app";
 import { env } from "./config/env";
 import { prisma } from "./config/prisma";
+import { purgeExpiredResetTokens } from "./services/passwordReset.service";
 
 const app = createApp();
 
@@ -9,6 +10,11 @@ async function main(): Promise<void> {
   // thay vì để lỗi xuất hiện muộn ở request đầu tiên.
   await prisma.$connect();
   console.log("✅ Kết nối MySQL thành công.");
+
+  // Dọn token đặt lại mật khẩu cũ khi khởi động và mỗi 6 giờ.
+  const purge = () => void purgeExpiredResetTokens().catch((e: unknown) => console.warn("[PasswordReset] Dọn token lỗi:", e instanceof Error ? e.message : e));
+  purge();
+  setInterval(purge, 6 * 60 * 60 * 1000).unref();
 
   app.listen(env.PORT, () => {
     console.log(`🚀 Backend đang chạy tại http://localhost:${env.PORT}`);

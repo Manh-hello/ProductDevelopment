@@ -9,6 +9,8 @@ import VocabularyPage from './pages/VocabularyPage';
 import QuizPage from './pages/QuizPage';
 import DashboardPage from './pages/DashboardPage';
 import AuthPage from './pages/AuthPage';
+import ForgotPasswordPage from './pages/ForgotPasswordPage';
+import ResetPasswordPage from './pages/ResetPasswordPage';
 import AddVocabularyPage from './pages/AddVocabularyPage';
 import VocabularyDetailPage from './pages/VocabularyDetailPage';
 import EditVocabularyPage from './pages/EditVocabularyPage';
@@ -50,6 +52,8 @@ export default function App() {
       <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/auth" element={<AuthPage />} />
+        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+        <Route path="/reset-password" element={<ResetPasswordPage />} />
         <Route path="/library" element={<LibraryPage />} />
         <Route element={<RequireAuth><Outlet /></RequireAuth>}>
           <Route path="/learn" element={<LearnPage />} />

@@ -2,7 +2,7 @@
 
 ## Project overview
 
-This repository is a Chinese vocabulary learning app with a React frontend and an Express API. The frontend is currently mostly a static prototype: pages use mock data and `localStorage`; do not assume a page is connected to the backend unless its code proves it.
+This repository is a Chinese vocabulary learning app with a React frontend and an Express API. The frontend calls the real backend through `frontend/src/api/index.ts`; `docs/frontend-backend-mapping.md` lists each page's API and which exercises are auto-graded vs self-assessed. Do not assume a feature works unless its code proves it, and never present placeholder data as real.
 
 ## Stack and layout
 
@@ -51,7 +51,7 @@ Set `DATABASE_URL`, `JWT_SECRET`, and optionally `PORT` in `backend/.env`. Never
 - Follow the existing TypeScript and file organization; avoid adding dependencies when the current stack already handles the need.
 - Validate request input with the existing Zod validators, protect user-specific routes with the existing authentication middleware, and scope database reads/writes to the authenticated user.
 - Use Prisma migrations for schema changes and update seed data or documentation when their assumptions change.
-- Keep frontend mock/local storage behavior explicit. When connecting a page to the API, follow existing route and response conventions and update the mapping documentation if the integration state changes.
+- Do not add mock data that pretends a feature works; show an explicit unavailable/empty state instead. When connecting a page to the API, follow existing route and response conventions and update the mapping documentation if the integration state changes.
 - Preserve unrelated user changes. Inspect `git status` before editing and do not overwrite existing work.
 - Do not run tests or other verification commands unless the user asks for verification; report what was and was not checked.
 

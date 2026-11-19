@@ -1,10 +1,10 @@
-import { del, get, patch, post, put } from '../lib/api';
+import { del, get, patch, post, postBlob, put } from '../lib/api';
 import type {
   Achievement, AnswerResult, DailyActivity, DailyChallenge, DashboardSummary, NotificationList, Question, ReviewForecast,
   SessionCompletion, SessionSummary, SkillScore, StartedSession, StatisticsOverview, User, UserSentence, UserVocabulary,
   UserVocabularyList, Vocabulary, VocabularyProgress, WeakWord, AppNotification, Example,
   GenerateSentencesResult, SentenceMode, UsedWord, WordLookupResult,
-} from '../lib/types.ts';
+} from '../lib/types';
 
 export const authApi = {
   login: (email: string, password: string) => post<{ user: User; token: string }>('/auth/login', { email, password }),
@@ -16,6 +16,9 @@ export const authApi = {
   changePassword: (currentPassword: string, newPassword: string) => put<{ changed: boolean }>('/auth/password', { currentPassword, newPassword }),
   deleteAccount: (password: string) => del<{ deleted: boolean }>('/auth/me', { password }),
   exportData: () => get<unknown>('/auth/export'),
+  /** Luôn thành công (200) dù email có đăng ký hay không; 503 nếu server chưa cấu hình email. */
+  forgotPassword: (email: string) => post<{ requested: boolean }>('/auth/forgot-password', { email }),
+  resetPassword: (token: string, newPassword: string) => post<{ reset: boolean }>('/auth/reset-password', { token, newPassword }),
 };
 
 export interface NewVocabularyInput {
@@ -147,3 +150,31 @@ export const sentencesApi = {
 };
 
 export type { Question };
+
+// ---------- Nhận diện chữ viết ----------
+export type HandwritingStatus = 'recognized' | 'low_confidence' | 'unrecognized' | 'no_content';
+export interface HandwritingServiceStatus {
+  configured: boolean;
+  available: boolean;
+  provider: string | null;
+  minConfidence: number;
+  maxImageBytes: number;
+  acceptedMimeTypes: string[];
+  analysisSupported: boolean;
+}
+export interface HandwritingResult {
+  attemptId: string;
+  status: HandwritingStatus;
+  message: string;
+  predicted: { char: string; confidence: number } | null;
+  candidates: { char: string; confidence: number }[];
+  minConfidence: number;
+  match: { targetChars: string[]; unsupportedChars: string[]; matchesTarget: boolean | null } | null;
+  /** Model hiện tại không phân tích nét/thứ tự nét nên luôn null. */
+  analysis: null;
+  analysisSupported: boolean;
+}
+export const handwritingApi = {
+  status: () => get<HandwritingServiceStatus>('/handwriting/status'),
+  recognize: (image: Blob, vocabularyId?: string) => postBlob<HandwritingResult>('/handwriting/recognize', image, { vocabularyId }),
+};

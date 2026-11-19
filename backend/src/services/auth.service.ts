@@ -1,5 +1,4 @@
 import bcrypt from "bcryptjs";
-import type { Prisma } from "@prisma/client";
 import { prisma } from "../config/prisma";
 import { AppError } from "../utils/AppError";
 import { signToken } from "../utils/jwt";
@@ -78,17 +77,12 @@ export async function updateProfile(userId: string, input: UpdateProfileInput) {
   const current = await prisma.user.findUnique({ where: { id: userId }, select: { settings: true } });
   if (!current) throw new AppError("Không tìm thấy người dùng.", 404);
 
-  const existingSettings = current.settings && typeof current.settings === "object" && !Array.isArray(current.settings)
-    ? current.settings
-    : {};
+  const existingSettings = (current.settings && typeof current.settings === "object" && !Array.isArray(current.settings) ? current.settings : {}) as Record<string, unknown>;
   const { settings, ...rest } = input;
-  const mergedSettings = settings
-    ? ({ ...existingSettings, ...settings } as Prisma.InputJsonObject)
-    : undefined;
 
   return prisma.user.update({
     where: { id: userId },
-    data: { ...rest, ...(mergedSettings ? { settings: mergedSettings } : {}) },
+    data: { ...rest, ...(settings ? { settings: { ...existingSettings, ...settings } } : {}) },
     select: PUBLIC_USER_SELECT,
   });
 }

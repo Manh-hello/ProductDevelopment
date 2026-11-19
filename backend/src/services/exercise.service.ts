@@ -79,7 +79,20 @@ export function resolveExerciseTypes(requested?: string[]): string[] {
  * Dạng cần câu ví dụ mà từ chưa có ví dụ sẽ tự hạ cấp xuống QUIZ (để `exerciseType` luôn phản ánh đúng câu hỏi).
  * Câu hỏi sinh động từ Vocabulary tại runtime; đáp án KHÔNG nằm trong response - server tự chấm (answer.service.ts).
  */
+/** Các dạng bài BẮT BUỘC có câu nền (câu ví dụ / câu đã lưu có bản dịch). */
+export const SENTENCE_BASED_TYPES: string[] = [
+  EXERCISE_TYPES.FILL_BLANK,
+  EXERCISE_TYPES.SENTENCE_ORDER,
+  EXERCISE_TYPES.TRANSLATION,
+  EXERCISE_TYPES.TRANSLATION_HUB,
+];
+
 export interface GenerateOptions {
+  /**
+   * true: từ không dựng được câu hỏi đúng loại (thiếu câu nền) bị BỎ khỏi phiên thay vì hạ cấp âm thầm xuống QUIZ.
+   * Dùng khi mọi loại bài được yêu cầu đều cần câu nền (trang Điền từ / Sắp xếp / Dịch...).
+   */
+  strict?: boolean;
   /** Chỉ dùng câu đã lưu của user (có bản dịch) làm câu nền khi từ đó có câu như vậy; ngược lại vẫn dùng câu ví dụ của từ. */
   preferSaved?: boolean;
 }
@@ -120,7 +133,7 @@ export async function generateQuestionsForItems(
   const examplePool: PracticeExample[] = [...examples, ...saved, ...extraExamples];
   const knownWords = vocabPool.map((v) => v.hanzi);
 
-  return items.map((item, index) => {
+  const generated = items.map((item, index): GeneratedQuestion | null => {
     const requestedType = typePlan[index];
     const vocabulary = item.vocabulary;
     const ownExamples = examplesByVocab.get(vocabulary.id) ?? [];
@@ -130,6 +143,7 @@ export async function generateQuestionsForItems(
     let built = buildQuestion(requestedType, ctx);
     let finalType = requestedType;
     if (!built) {
+      if (options.strict) return null;
       finalType = EXERCISE_TYPES.QUIZ;
       built = buildQuestion(EXERCISE_TYPES.QUIZ, ctx)!;
     }
@@ -140,6 +154,7 @@ export async function generateQuestionsForItems(
       ...built,
     };
   });
+  return generated.filter((q): q is GeneratedQuestion => q !== null);
 }
 
 interface BuildContext {

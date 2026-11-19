@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { sectionHome } from '../../layouts/navigation';
 import AppShell from '../../layouts/AppShell';
 import { speak } from '../../lib/speak';
 import usePracticeSession from '../../lib/usePracticeSession';
@@ -7,7 +8,7 @@ import type { PracticeConfig } from '../../lib/usePracticeSession';
 import type { Question } from '../../lib/types';
 import { ErrorBox } from '../PageState';
 import { PageLoading } from '../../lib/auth';
-import DrawPad from './DrawPad';
+import HandwritingPanel from './HandwritingPanel';
 
 interface Props extends PracticeConfig {
   /** Nhãn nhỏ bên trái (vd "HSK • Trắc nghiệm"). */
@@ -30,6 +31,7 @@ const isTypingTarget = () => ['input', 'textarea'].includes((document.activeElem
 
 export default function PracticeRunner({ badge, title, resultPath = '/practice/result', ...config }: Props) {
   const navigate = useNavigate();
+  const { pathname } = useLocation();
   const s = usePracticeSession(config);
   const { question: q, phase, result } = s;
 
@@ -53,7 +55,7 @@ export default function PracticeRunner({ badge, title, resultPath = '/practice/r
 
   const finish = async () => {
     const done = await s.next();
-    if (done) navigate(`${resultPath}?session=${done.sessionId}`, { replace: true });
+    if (done) navigate(`${resultPath}?session=${done.sessionId}`, { replace: true, state: { navFrom: pathname } });
   };
 
   const submitCurrent = () => {
@@ -142,7 +144,7 @@ export default function PracticeRunner({ badge, title, resultPath = '/practice/r
                 className="w-8 h-8 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface-variant flex items-center justify-center transition-colors"
                 title="Thoát phiên luyện tập"
                 type="button"
-                onClick={() => navigate('/practice')}
+                onClick={() => navigate(sectionHome(pathname))}
               >
                 <span className="material-symbols-outlined text-[18px]">close</span>
               </button>
@@ -407,7 +409,7 @@ function SelfView({ q, revealed, setRevealed, transcript, setTranscript, onRate,
 
   return (
     <div className="bg-surface-container-lowest rounded-2xl p-space-lg shadow-sm flex flex-col gap-space-md">
-      {q.exerciseType === 'WRITING' && <DrawPad resetKey={q.vocabularyId} />}
+      {q.exerciseType === 'WRITING' && <HandwritingPanel vocabularyId={q.vocabularyId} />}
 
       {q.exerciseType === 'SPEAKING' && (
         <div className="flex flex-col items-center gap-space-sm">
@@ -421,6 +423,7 @@ function SelfView({ q, revealed, setRevealed, transcript, setTranscript, onRate,
           {transcript && (
             <p className={`font-body-md ${matched ? 'text-secondary' : 'text-on-surface-variant'}`}>
               Nghe được: <strong className="font-display-character text-[22px]">{transcript}</strong> {matched ? '✓ khớp' : ''}
+              <span className="block font-label-sm text-on-surface-variant">Do trình duyệt nhận dạng, chỉ để tham khảo — bạn tự đánh giá phát âm bên dưới.</span>
             </p>
           )}
         </div>

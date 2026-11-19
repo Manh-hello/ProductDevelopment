@@ -7,6 +7,7 @@ import practiceRoutes from "./practice.routes";
 import dashboardRoutes from "./dashboard.routes";
 import pinyinRoutes from "./pinyin.routes";
 import catalogRoutes from "./catalog.routes";
+import handwritingRoutes from "./handwriting.routes";
 import { achievementRoutes, notificationRoutes, statisticsRoutes, tagRoutes, userSentenceRoutes } from "./misc.routes";
 
 /**
@@ -22,6 +23,7 @@ router.use("/practice", practiceRoutes);
 router.use("/dashboard", dashboardRoutes);
 router.use("/pinyin", pinyinRoutes);
 router.use("/catalog", catalogRoutes);
+router.use("/handwriting", handwritingRoutes);
 router.use("/tags", tagRoutes);
 router.use("/achievements", achievementRoutes);
 router.use("/user-sentences", userSentenceRoutes);

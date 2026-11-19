@@ -1,4 +1,4 @@
-import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { dashboardApi, practiceApi } from '../api';
 import AppShell from '../layouts/AppShell';
 import { speak } from '../lib/speak';
@@ -12,6 +12,7 @@ const WEEKDAY = ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'];
 export default function SessionResultView({ variant }: { variant: 'practice' | 'review' }) {
   const [params] = useSearchParams();
   const navigate = useNavigate();
+  const navFrom = (useLocation().state as { navFrom?: string } | null)?.navFrom;
   const sessionId = params.get('session');
   const state = useApi(() => (sessionId ? practiceApi.summary(sessionId) : Promise.reject(new Error('missing'))), [sessionId]);
   const forecast = useApi(() => (variant === 'review' ? dashboardApi.forecast() : Promise.resolve(null)), [variant]);
@@ -136,7 +137,7 @@ export default function SessionResultView({ variant }: { variant: 'practice' | '
 
               <div className="flex flex-wrap gap-space-sm justify-center">
                 <Link to="/dashboard" className="px-space-lg py-2.5 rounded-lg bg-surface-container font-title-sm font-bold">Về Dashboard</Link>
-                <button type="button" onClick={() => navigate(variant === 'review' ? '/review' : '/practice')} className="px-space-lg py-2.5 rounded-lg bg-primary-container text-on-primary font-title-sm font-bold">
+                <button type="button" onClick={() => navigate(variant === 'review' ? '/review' : navFrom ?? '/practice')} className="px-space-lg py-2.5 rounded-lg bg-primary-container text-on-primary font-title-sm font-bold">
                   {variant === 'review' ? 'Ôn tiếp thẻ đến hạn' : 'Luyện tiếp phiên mới'}
                 </button>
                 <Link to="/vocabulary/new" className="px-space-lg py-2.5 rounded-lg bg-surface-container font-title-sm font-bold">Thêm từ mới</Link>

@@ -1,6 +1,6 @@
 # Database (MySQL 8 + Prisma)
 
-Schema khớp **chính xác ERD bạn cung cấp** (15 bảng). Nguồn sự thật: `backend/prisma/schema.prisma`. PK dạng UUID (`CHAR(36)`), charset `utf8mb4`.
+Schema gồm 18 bảng (16 bảng cũ gồm `notifications` + `password_reset_tokens` + `handwriting_attempts`). Nguồn sự thật: `backend/prisma/schema.prisma`. PK dạng UUID (`CHAR(36)`), charset `utf8mb4`.
 
 ## ERD
 
@@ -22,6 +22,9 @@ erDiagram
   EXERCISES ||--o{ EXERCISE_ATTEMPTS : type_of
   STUDY_SESSIONS ||--o{ EXERCISE_ATTEMPTS : contains
   USER_VOCABULARIES ||--o{ SRS_REVIEWS : reviewed
+  USERS ||--o{ PASSWORD_RESET_TOKENS : requests
+  USERS ||--o{ HANDWRITING_ATTEMPTS : recognizes
+  VOCABULARIES ||--o{ HANDWRITING_ATTEMPTS : practiced
 ```
 
 ## Nhóm bảng
@@ -54,3 +57,13 @@ erDiagram
 ## Dữ liệu làm giàu từ vựng (AI)
 
 Bảng `vocabularies` có thêm: `han_viet` (âm Hán Việt), `traditional` (phồn thể), `measure_word` (lượng từ), `usage` (cách dùng), `synonyms` / `antonyms` / `collocations` (JSON), `enriched_at` / `enriched_by` (truy vết; `enriched_at IS NULL` = chưa làm giàu). Bảng `vocabulary_examples` có thêm `explanation` (giải thích cách dùng) và `source` (`manual` | `seed` | `ai`). Sinh bằng `npm run prisma:enrich` (xem docs/setup.md); pinyin của câu/cụm từ luôn do `pinyin-pro` tạo, không lấy từ AI.
+
+## Quên mật khẩu & nhận diện chữ viết (migration `20261115000000`, `20261115010000`)
+| Bảng / cột | Mô tả |
+|---|---|
+| `users.password_changed_at` (DATETIME NULL) | Đặt khi đổi mật khẩu qua luồng quên mật khẩu. JWT có `iat` nhỏ hơn mốc này bị `authenticateToken` từ chối |
+| `password_reset_tokens` | `id`, `user_id` (FK → users, CASCADE), `token_hash` CHAR(64) **UNIQUE** (SHA-256 hex; không lưu token gốc), `expires_at`, `used_at` (NULL = chưa dùng), `created_at`. Index `(user_id, created_at)`, `(expires_at)`. Server dọn bản ghi hết hạn/đã dùng quá 1 ngày khi khởi động và mỗi 6 giờ |
+| `study_sessions.plan` (JSON NULL) | Kế hoạch câu hỏi `[{ v: vocabularyId, t: exerciseType, e: exampleId\|null }]`; NULL với phiên cũ |
+| `handwriting_attempts` | `id`, `user_id` (FK CASCADE), `vocabulary_id` (FK SET NULL, nullable), `status`, `predicted_char` VARCHAR(8), `confidence` DOUBLE, `matches_target` BOOLEAN NULL, `created_at`. **Không có cột ảnh** |
+
+Áp dụng: `cd backend && npx prisma migrate dev` (dev) hoặc `npx prisma migrate deploy` (production). Cả hai migration chỉ thêm cột/bảng, không sửa dữ liệu cũ, tương thích MySQL 8.

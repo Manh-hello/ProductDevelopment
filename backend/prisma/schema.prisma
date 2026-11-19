@@ -30,6 +30,9 @@ model User {
   longestStreak Int @default(0) @map("longest_streak")
   totalXp       Int @default(0) @map("total_xp")
 
+  /// Mốc đổi mật khẩu gần nhất qua luồng "quên mật khẩu": JWT cấp TRƯỚC mốc này bị từ chối (xem authenticateToken).
+  passwordChangedAt DateTime? @map("password_changed_at")
+
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
@@ -40,6 +43,8 @@ model User {
   xpTransactions   XpTransaction[]
   studySessions    StudySession[]
   notifications    Notification[]
+  passwordResetTokens PasswordResetToken[]
+  handwritingAttempts HandwritingAttempt[]
 
   @@map("users")
 }
@@ -84,6 +89,7 @@ model Vocabulary {
   userVocabularies UserVocabulary[]
   userSentences    UserSentence[]
   exerciseAttempts ExerciseAttempt[]
+  handwritingAttempts HandwritingAttempt[]
 
   @@index([hanzi])
   @@index([pinyin])
@@ -269,6 +275,10 @@ model StudySession {
   correctAnswers Int @default(0) @map("correct_answers")
   xpEarned       Int @default(0) @map("xp_earned")
 
+  /// Kế hoạch câu hỏi do server sinh: [{ v: vocabularyId, t: exerciseType, e: exampleId | null }].
+  /// Dùng để từ chối đáp án không thuộc phiên / sai loại bài. Null = phiên cũ (trước khi có cột này), không kiểm tra.
+  plan        Json?
+
   startedAt   DateTime  @default(now()) @map("started_at")
   completedAt DateTime? @map("completed_at")
 
@@ -395,4 +405,47 @@ model Notification {
   @@index([userId, isRead])
   @@index([userId, createdAt])
   @@map("notifications")
+}
+
+// ==================================================
+// QUÊN MẬT KHẨU & NHẬN DIỆN CHỮ VIẾT
+// ==================================================
+
+/// Token đặt lại mật khẩu. CHỈ lưu hash SHA-256 của token (token gốc chỉ nằm trong email).
+/// Dùng một lần (usedAt), có hạn (expiresAt).
+model PasswordResetToken {
+  id        String    @id @default(uuid()) @db.Char(36)
+  userId    String    @map("user_id") @db.Char(36)
+  tokenHash String    @unique @map("token_hash") @db.Char(64)
+  expiresAt DateTime  @map("expires_at")
+  usedAt    DateTime? @map("used_at")
+  createdAt DateTime  @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+  @@index([expiresAt])
+  @@map("password_reset_tokens")
+}
+
+/// Lịch sử nhận diện chữ viết. KHÔNG lưu ảnh/nét vẽ - chỉ kết quả tối thiểu.
+model HandwritingAttempt {
+  id             String   @id @default(uuid()) @db.Char(36)
+  userId         String   @map("user_id") @db.Char(36)
+  /// Từ đang luyện (nếu có) - null khi nhận diện tự do hoặc từ đã bị xoá.
+  vocabularyId   String?  @map("vocabulary_id") @db.Char(36)
+  /// "recognized" | "low_confidence" | "unrecognized" | "no_content"
+  status         String   @db.VarChar(20)
+  predictedChar  String?  @map("predicted_char") @db.VarChar(8)
+  confidence     Float?
+  /// Chữ dự đoán có nằm trong các chữ của từ đang luyện hay không (null nếu không có từ mục tiêu / chưa nhận diện được).
+  matchesTarget  Boolean? @map("matches_target")
+  createdAt      DateTime @default(now()) @map("created_at")
+
+  user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  vocabulary Vocabulary? @relation(fields: [vocabularyId], references: [id], onDelete: SetNull)
+
+  @@index([userId, createdAt])
+  @@index([vocabularyId])
+  @@map("handwriting_attempts")
 }

@@ -44,6 +44,8 @@ type Query = Record<string, string | number | boolean | undefined | null>;
 interface RequestOptions {
   method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
   body?: unknown;
+  /** Gửi nguyên bytes (vd ảnh) thay vì JSON; Content-Type lấy từ `rawBody.type`. */
+  rawBody?: Blob;
   query?: Query;
   signal?: AbortSignal;
 }
@@ -54,7 +56,7 @@ export const setUnauthorizedHandler = (fn: (() => void) | null) => {
   onUnauthorized = fn;
 };
 
-export async function request<T>(path: string, { method = 'GET', body, query, signal }: RequestOptions = {}): Promise<T> {
+export async function request<T>(path: string, { method = 'GET', body, rawBody, query, signal }: RequestOptions = {}): Promise<T> {
   const qs = query
     ? '?' +
       Object.entries(query)
@@ -70,10 +72,10 @@ export async function request<T>(path: string, { method = 'GET', body, query, si
       method,
       signal,
       headers: {
-        ...(body !== undefined ? { 'Content-Type': 'application/json' } : {}),
+        ...(rawBody ? { 'Content-Type': rawBody.type } : body !== undefined ? { 'Content-Type': 'application/json' } : {}),
         ...(token ? { Authorization: `Bearer ${token}` } : {}),
       },
-      body: body !== undefined ? JSON.stringify(body) : undefined,
+      body: rawBody ?? (body !== undefined ? JSON.stringify(body) : undefined),
     });
   } catch (err) {
     if ((err as Error).name === 'AbortError') throw err;
@@ -93,6 +95,7 @@ export async function request<T>(path: string, { method = 'GET', body, query, si
 
 export const get = <T,>(path: string, query?: Query, signal?: AbortSignal) => request<T>(path, { query, signal });
 export const post = <T,>(path: string, body?: unknown) => request<T>(path, { method: 'POST', body: body ?? {} });
+export const postBlob = <T,>(path: string, rawBody: Blob, query?: Query) => request<T>(path, { method: 'POST', rawBody, query });
 export const put = <T,>(path: string, body?: unknown) => request<T>(path, { method: 'PUT', body: body ?? {} });
 export const patch = <T,>(path: string, body?: unknown) => request<T>(path, { method: 'PATCH', body: body ?? {} });
 export const del = <T,>(path: string, body?: unknown) => request<T>(path, { method: 'DELETE', body });

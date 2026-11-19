@@ -258,9 +258,6 @@ export interface StatisticsOverview {
 
 export interface VocabularyProgress {
   inMyList: boolean;
-  /** Được sửa bản gốc dùng chung? (false khi đang có người dùng khác học từ này). */
-  canEditShared: boolean;
-  otherLearners: number;
   userVocabulary: (Omit<UserVocabulary, 'vocabulary'> & { retention: number }) | null;
   skills: SkillScore[];
   history: { id: string; quality: number; newInterval: number; reviewedAt: string; nextReviewAt: string }[];
