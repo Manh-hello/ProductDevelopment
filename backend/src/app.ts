@@ -7,6 +7,7 @@ import { env } from "./config/env";
 
 export function createApp(): Express {
   const app = express();
+  if (env.TRUST_PROXY > 0) app.set("trust proxy", env.TRUST_PROXY);
 
   const origins = env.CORS_ORIGIN?.split(",").map((o) => o.trim()).filter(Boolean);
   app.use(cors(origins && origins.length > 0 ? { origin: origins } : undefined));

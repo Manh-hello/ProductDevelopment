@@ -21,6 +21,17 @@ export function errorHandler(
     return;
   }
 
+  // Lỗi của body-parser (JSON hỏng, body quá lớn): trả 4xx thay vì 500.
+  const bodyErr = err as { type?: string; status?: number };
+  if (bodyErr?.type === "entity.too.large") {
+    fail(res, "Dữ liệu gửi lên quá lớn.", 413);
+    return;
+  }
+  if (bodyErr?.type === "entity.parse.failed" || bodyErr?.type === "encoding.unsupported") {
+    fail(res, "Dữ liệu gửi lên không hợp lệ.", 400);
+    return;
+  }
+
   // Lỗi Prisma đã biết (vd unique constraint). Nhận diện bằng field `code`
   // (dạng "P20xx") thay vì `instanceof Prisma.PrismaClientKnownRequestError`
   // để không phụ thuộc cứng vào namespace Prisma đã generate.

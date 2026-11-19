@@ -1,8 +1,34 @@
 import { useNavigate } from 'react-router-dom';
+import { dashboardApi } from '../api';
 import AppShell from '../layouts/AppShell';
+import { useAuth } from '../lib/auth';
+import useApi from '../lib/useApi';
+import type { SkillScore } from '../lib/types';
+
+/** Độ chính xác THẬT theo nhóm kỹ năng (từ lịch sử luyện tập của bạn); chưa có lượt nào thì nói rõ là chưa có dữ liệu. */
+function SkillBar({ skill, loading }: { skill?: SkillScore; loading: boolean }) {
+  const acc = skill?.accuracy ?? null;
+  const tone = acc === null ? 'bg-surface-container-highest' : acc >= 80 ? 'bg-secondary' : acc >= 60 ? 'bg-primary-container' : 'bg-error';
+  return (
+    <>
+      <div className="flex items-center justify-between text-label-sm font-label-sm">
+        <span className="text-on-surface-variant">Chính xác ({skill?.label ?? 'kỹ năng này'})</span>
+        <span className="font-bold text-on-surface">
+          {loading ? '…' : acc === null ? 'Chưa có dữ liệu' : `${acc}% • ${skill?.attempts} lượt`}
+        </span>
+      </div>
+      <div className="w-full h-1.5 rounded-full bg-surface-container-highest overflow-hidden">
+        <div className={`h-full rounded-full ${tone}`} style={{ width: `${acc ?? 0}%` }}></div>
+      </div>
+    </>
+  );
+}
 
 export default function PracticeHubPage() {
   const navigate = useNavigate();
+  const { summary } = useAuth();
+  const skills = useApi(() => dashboardApi.skills(), []);
+  const skillOf = (key: string) => skills.data?.find((k) => k.key === key);
 
   return (
     <AppShell>
@@ -58,9 +84,6 @@ export default function PracticeHubPage() {
                   <span className="px-2.5 py-1 rounded-full bg-secondary-container text-on-secondary-container font-label-sm text-label-sm font-bold inline-flex items-center gap-1">
                     <span className="material-symbols-outlined text-[16px]">auto_awesome</span> Khuyên dùng hôm nay{' '}
                   </span>
-                  <span className="font-label-md text-label-md text-on-surface-variant font-medium">
-                    Khoảng cách lặp tối ưu: Giờ vàng 14:00 - 18:00
-                  </span>
                 </div>
                 <h2 className="font-headline-lg text-headline-lg text-on-surface font-bold tracking-tight">
                   {' '}
@@ -73,8 +96,8 @@ export default function PracticeHubPage() {
                 </p>
                 <div className="mt-space-md flex flex-col gap-space-xs">
                   <div className="flex items-center justify-between text-on-surface-variant font-label-md text-label-md">
-                    <span className="font-bold text-on-surface">Tỷ lệ phân bổ 20 thẻ tự động:</span>
-                    <span className="text-primary-container font-semibold">Tự động cân bằng AI</span>
+                    <span className="font-bold text-on-surface">Tỷ lệ phân bổ tự động:</span>
+                    <span className="text-primary-container font-semibold">Tự cân bằng theo SRS</span>
                   </div>
                   <div className="w-full h-3 rounded-full bg-surface-container-highest overflow-hidden flex shadow-inner">
                     <div
@@ -97,19 +120,19 @@ export default function PracticeHubPage() {
                     <div className="flex items-center gap-2">
                       <span className="w-2.5 h-2.5 rounded-full bg-primary-container shrink-0"></span>
                       <span className="font-body-sm text-body-sm text-on-surface">
-                        <strong className="font-title-sm text-title-sm">20%</strong> Từ mới (4 từ)
+                        <strong className="font-title-sm text-title-sm">20%</strong> Từ mới
                       </span>
                     </div>
                     <div className="flex items-center gap-2">
                       <span className="w-2.5 h-2.5 rounded-full bg-secondary shrink-0"></span>
                       <span className="font-body-sm text-body-sm text-on-surface">
-                        <strong className="font-title-sm text-title-sm">50%</strong> Đến hạn SRS (10 từ)
+                        <strong className="font-title-sm text-title-sm">50%</strong> Đến hạn SRS
                       </span>
                     </div>
                     <div className="flex items-center gap-2">
                       <span className="w-2.5 h-2.5 rounded-full bg-tertiary-container shrink-0"></span>
                       <span className="font-body-sm text-body-sm text-on-surface">
-                        <strong className="font-title-sm text-title-sm">30%</strong> Cần củng cố (6 từ)
+                        <strong className="font-title-sm text-title-sm">30%</strong> Cần củng cố
                       </span>
                     </div>
                   </div>
@@ -117,17 +140,9 @@ export default function PracticeHubPage() {
               </div>
               <div className="pt-space-md flex flex-wrap items-center justify-between gap-space-md">
                 <div className="flex items-center gap-space-lg">
-                  <div className="flex items-center gap-2 text-on-surface-variant font-label-md text-label-md">
-                    <span className="material-symbols-outlined text-on-surface text-[18px]">schedule</span>
-                    <span>8 - 12 phút</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-secondary font-label-md text-label-md font-bold">
-                    <span className="material-symbols-outlined text-[18px]">workspace_premium</span>
-                    <span>+120 XP Thưởng</span>
-                  </div>
                   <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-tertiary-fixed text-on-tertiary-fixed font-label-sm text-label-sm font-bold shadow-sm">
                     <span className="material-symbols-outlined text-tertiary text-[16px]">local_fire_department</span>
-                    <span>12 Ngày Streak</span>
+                    <span>{summary?.currentStreak ?? 0} Ngày Streak</span>
                   </div>
                 </div>
                 <button
@@ -202,24 +217,6 @@ export default function PracticeHubPage() {
                   Hoà hợp, thấu suốt mạch nghĩa tự nhiên
                 </span>
               </div>
-              <div className="relative z-10 p-3 rounded-lg bg-surface-container-lowest shadow-sm flex items-center justify-between">
-                <div className="flex flex-col">
-                  <span className="font-label-sm text-label-sm text-on-surface-variant">
-                    Tỷ lệ nhớ mặt chữ tuần qua
-                  </span>
-                  <span className="font-title-sm text-title-sm font-bold text-secondary">86.4% Khả quan</span>
-                </div>
-                <svg className="w-14 h-8 text-secondary" fill="none" viewBox="0 0 56 24">
-                  <path
-                    d="M2 20 L12 16 L22 18 L32 10 L42 12 L52 4"
-                    stroke="currentColor"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2.5"
-                  />
-                  <circle cx="52" cy="4" fill="currentColor" r="2.5" />
-                </svg>
-              </div>
             </div>
           </div>
         </section>
@@ -266,13 +263,7 @@ export default function PracticeHubPage() {
                 </p>
               </div>
               <div className="flex flex-col gap-space-sm pt-space-xs">
-                <div className="flex items-center justify-between text-label-sm font-label-sm">
-                  <span className="text-on-surface-variant">Chính xác gần đây</span>
-                  <span className="font-bold text-secondary">91% Tinh thông</span>
-                </div>
-                <div className="w-full h-1.5 rounded-full bg-surface-container-highest overflow-hidden">
-                  <div className="h-full bg-secondary rounded-full" style={{ width: '91%' }}></div>
-                </div>
+                <SkillBar skill={skillOf('recognition')} loading={skills.loading} />
                 <div className="flex items-center justify-between mt-2 pt-2">
                   <span className="font-label-sm text-label-sm text-on-surface-variant font-medium">
                     10 Câu • Thích ứng
@@ -315,13 +306,7 @@ export default function PracticeHubPage() {
                 </p>
               </div>
               <div className="flex flex-col gap-space-sm pt-space-xs">
-                <div className="flex items-center justify-between text-label-sm font-label-sm">
-                  <span className="text-on-surface-variant">Độ bền trí nhớ</span>
-                  <span className="font-bold text-on-surface">78% Ổn định</span>
-                </div>
-                <div className="w-full h-1.5 rounded-full bg-surface-container-highest overflow-hidden">
-                  <div className="h-full bg-primary-container rounded-full" style={{ width: '78%' }}></div>
-                </div>
+                <SkillBar skill={skillOf('recognition')} loading={skills.loading} />
                 <div className="flex items-center justify-between mt-2 pt-2">
                   <span className="font-label-sm text-label-sm text-on-surface-variant font-medium">
                     10 Câu • Thử thách
@@ -366,13 +351,7 @@ export default function PracticeHubPage() {
                 </p>
               </div>
               <div className="flex flex-col gap-space-sm pt-space-xs">
-                <div className="flex items-center justify-between text-label-sm font-label-sm">
-                  <span className="text-on-surface-variant">Tỷ lệ chính xác</span>
-                  <span className="font-bold text-secondary">87% Chuẩn thanh</span>
-                </div>
-                <div className="w-full h-1.5 rounded-full bg-surface-container-highest overflow-hidden">
-                  <div className="h-full bg-secondary rounded-full" style={{ width: '87%' }}></div>
-                </div>
+                <SkillBar skill={skillOf('pinyin')} loading={skills.loading} />
                 <div className="flex items-center justify-between mt-2 pt-2">
                   <span className="font-label-sm text-label-sm text-on-surface-variant font-medium">
                     Chọn nhanh &amp; Ghép vần
@@ -415,13 +394,7 @@ export default function PracticeHubPage() {
                 </p>
               </div>
               <div className="flex flex-col gap-space-sm pt-space-xs">
-                <div className="flex items-center justify-between text-label-sm font-label-sm">
-                  <span className="text-on-surface-variant">Tỷ lệ chính xác</span>
-                  <span className="font-bold text-secondary">82% Rõ nét</span>
-                </div>
-                <div className="w-full h-1.5 rounded-full bg-surface-container-highest overflow-hidden">
-                  <div className="h-full bg-secondary rounded-full" style={{ width: '82%' }}></div>
-                </div>
+                <SkillBar skill={skillOf('listening')} loading={skills.loading} />
                 <div className="flex items-center justify-between mt-2 pt-2">
                   <span className="font-label-sm text-label-sm text-on-surface-variant font-medium">
                     Tốc độ: 1.0x &amp; 1.25x
@@ -461,18 +434,11 @@ export default function PracticeHubPage() {
                 </div>
                 <p className="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
                   {' '}
-                  Mô phỏng viết thư pháp chuẩn: ngang trước dọc sau, phẩy trước mác sau. Ghi khắc trí nhớ cơ bắp (muscle
-                  memory) hiệu quả.{' '}
+                  Tự viết chữ Hán trên khung Mễ Điền rồi đối chiếu đáp án và tự chấm. Có thể gửi nét viết cho model nhận diện (khi máy chủ đã cấu hình).{' '}
                 </p>
               </div>
               <div className="flex flex-col gap-space-sm pt-space-xs">
-                <div className="flex items-center justify-between text-label-sm font-label-sm">
-                  <span className="text-on-surface-variant">Tỷ lệ chính xác</span>
-                  <span className="font-bold text-error">65% Cần cải thiện</span>
-                </div>
-                <div className="w-full h-1.5 rounded-full bg-surface-container-highest overflow-hidden">
-                  <div className="h-full bg-error rounded-full" style={{ width: '65%' }}></div>
-                </div>
+                <SkillBar skill={skillOf('writing')} loading={skills.loading} />
                 <div className="flex items-center justify-between mt-2 pt-2">
                   <span className="font-label-sm text-label-sm text-on-surface-variant font-medium">
                     Khung chữ Mễ Điền (米)
@@ -517,13 +483,7 @@ export default function PracticeHubPage() {
                 </p>
               </div>
               <div className="flex flex-col gap-space-sm pt-space-xs">
-                <div className="flex items-center justify-between text-label-sm font-label-sm">
-                  <span className="text-on-surface-variant">Tỷ lệ chính xác</span>
-                  <span className="font-bold text-on-surface">73% Khá tốt</span>
-                </div>
-                <div className="w-full h-1.5 rounded-full bg-surface-container-highest overflow-hidden">
-                  <div className="h-full bg-secondary rounded-full" style={{ width: '73%' }}></div>
-                </div>
+                <SkillBar skill={skillOf('sentence')} loading={skills.loading} />
                 <div className="flex items-center justify-between mt-2 pt-2">
                   <span className="font-label-sm text-label-sm text-on-surface-variant font-medium">
                     Hội thoại đời sống

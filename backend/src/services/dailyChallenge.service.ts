@@ -67,10 +67,18 @@ export async function claimDailyChallenge(userId: string) {
   if (challenge.claimed) throw new AppError("Bạn đã nhận thưởng thử thách hôm nay rồi.", 409);
   if (!challenge.allDone) throw new AppError("Bạn chưa hoàn thành tất cả nhiệm vụ của thử thách.", 400);
 
-  await prisma.$transaction([
-    prisma.xpTransaction.create({ data: { userId, amount: XP_DAILY_CHALLENGE_BONUS, source: "daily_challenge_bonus" } }),
-    prisma.user.update({ where: { id: userId }, data: { totalXp: { increment: XP_DAILY_CHALLENGE_BONUS } } }),
-  ]);
+  // Khoá hàng người dùng rồi kiểm tra lại "đã nhận chưa": hai lần nhận song song không thể cùng cộng XP.
+  const { start, end } = localDayBounds();
+  await prisma.$transaction(async (tx) => {
+    await tx.$queryRaw`SELECT id FROM users WHERE id = ${userId} FOR UPDATE`;
+    const already = await tx.xpTransaction.findFirst({
+      where: { userId, source: "daily_challenge_bonus", createdAt: { gte: start, lt: end } },
+      select: { id: true },
+    });
+    if (already) throw new AppError("Bạn đã nhận thưởng thử thách hôm nay rồi.", 409);
+    await tx.xpTransaction.create({ data: { userId, amount: XP_DAILY_CHALLENGE_BONUS, source: "daily_challenge_bonus" } });
+    await tx.user.update({ where: { id: userId }, data: { totalXp: { increment: XP_DAILY_CHALLENGE_BONUS } } });
+  });
   await createNotification(userId, {
     category: "achievement",
     title: "Hoàn thành Thử Thách Hôm Nay",

@@ -1,15 +1,55 @@
-import { useEffect, useRef } from 'react';
+import { forwardRef, useEffect, useImperativeHandle, useRef } from 'react';
 
-/** Bảng vẽ đơn giản để tập viết chữ Hán (chuột/cảm ứng). Không lưu ảnh - chỉ phục vụ tự luyện rồi đối chiếu đáp án. */
-export default function DrawPad({ resetKey }: { resetKey: string }) {
+export interface DrawPadHandle {
+  /** PNG nền trắng, nét đen (cùng kích thước canvas); null nếu chưa vẽ gì. */
+  toBlob: () => Promise<Blob | null>;
+  clear: () => void;
+}
+
+interface Props {
+  resetKey: string;
+  /** Gọi khi canvas chuyển giữa trống / có nét vẽ. */
+  onInkChange?: (hasInk: boolean) => void;
+}
+
+/** Bảng vẽ để tập viết chữ Hán (chuột/cảm ứng). Dùng để tự luyện; có thể xuất PNG để gửi nhận diện (HandwritingPanel). */
+const DrawPad = forwardRef<DrawPadHandle, Props>(function DrawPad({ resetKey, onInkChange }, handle) {
   const ref = useRef<HTMLCanvasElement>(null);
   const drawing = useRef(false);
+  const inked = useRef(false);
+
+  const setInk = (v: boolean) => {
+    if (inked.current !== v) {
+      inked.current = v;
+      onInkChange?.(v);
+    }
+  };
 
   const clear = () => {
     const c = ref.current;
     c?.getContext('2d')?.clearRect(0, 0, c.width, c.height);
+    setInk(false);
   };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(clear, [resetKey]);
+
+  useImperativeHandle(handle, () => ({
+    clear,
+    toBlob: () =>
+      new Promise<Blob | null>((resolve) => {
+        const c = ref.current;
+        if (!c || !inked.current) return resolve(null);
+        // Canvas trong suốt -> đặt lên nền trắng để model thấy nét đen trên nền sáng.
+        const out = document.createElement('canvas');
+        out.width = c.width;
+        out.height = c.height;
+        const ctx = out.getContext('2d')!;
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, out.width, out.height);
+        ctx.drawImage(c, 0, 0);
+        out.toBlob((b) => resolve(b), 'image/png');
+      }),
+  }));
 
   const pos = (e: React.PointerEvent<HTMLCanvasElement>) => {
     const c = ref.current!;
@@ -47,6 +87,7 @@ export default function DrawPad({ resetKey }: { resetKey: string }) {
             ctx.strokeStyle = '#1a1c1b';
             ctx.lineTo(x, y);
             ctx.stroke();
+            setInk(true);
           }}
           onPointerUp={() => (drawing.current = false)}
           onPointerLeave={() => (drawing.current = false)}
@@ -57,4 +98,6 @@ export default function DrawPad({ resetKey }: { resetKey: string }) {
       </button>
     </div>
   );
-}
+});
+
+export default DrawPad;

@@ -25,7 +25,12 @@ const NAV_ITEMS: NavItem[] = [
   },
   {
     key: 'sentences',
-    label: 'Luyện Câu & Phát Âm',
+    label: 'Luyện Câu',
+    icon: 'edit_note',
+  },
+  {
+    key: 'speaking',
+    label: 'Luyện Phát Âm',
     icon: 'record_voice_over',
   },
   {
@@ -59,7 +64,7 @@ export default function Sidebar() {
   const pct = (n: number | undefined) => `${Math.round(((n ?? 0) / total) * 100)}%`;
   const active = useActiveNavKey();
   return (
-    <aside className="fixed left-0 top-0 h-full w-72 bg-surface-container-low z-50 flex flex-col justify-between py-space-lg px-gutter-sm shadow-[0_1px_8px_rgba(0,0,0,0.04)]">
+    <aside className="fixed left-0 top-0 h-full w-72 bg-surface-container-low z-50 flex flex-col justify-between overflow-y-auto py-space-lg px-gutter-sm shadow-[0_1px_8px_rgba(0,0,0,0.04)]">
       <div className="flex flex-col gap-space-lg">
         <div className="px-space-xs">
           <div className="flex items-center gap-space-sm">

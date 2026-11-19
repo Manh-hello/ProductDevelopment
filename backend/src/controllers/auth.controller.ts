@@ -5,11 +5,14 @@ import { parseOrThrow } from "../utils/validate";
 import {
   changePasswordSchema,
   deleteAccountSchema,
+  forgotPasswordSchema,
   loginSchema,
   registerSchema,
+  resetPasswordSchema,
   updateProfileSchema,
 } from "../validators/auth.validator";
 import * as authService from "../services/auth.service";
+import * as passwordResetService from "../services/passwordReset.service";
 import { AuthRequest } from "../types/express";
 
 const uid = (req: Request) => (req as AuthRequest).user.id;
@@ -42,4 +45,17 @@ export const deleteMe = asyncHandler(async (req: Request, res: Response) => {
 
 export const exportMe = asyncHandler(async (req: Request, res: Response) => {
   ok(res, await authService.exportUserData(uid(req)), 200);
+});
+
+/** Phản hồi giống hệt nhau dù email có tồn tại hay không (không cho dò tài khoản). */
+export const forgotPassword = asyncHandler(async (req: Request, res: Response) => {
+  const { email } = parseOrThrow(forgotPasswordSchema, req.body);
+  await passwordResetService.requestPasswordReset(email);
+  ok(res, { requested: true }, 200);
+});
+
+export const resetPassword = asyncHandler(async (req: Request, res: Response) => {
+  const { token, newPassword } = parseOrThrow(resetPasswordSchema, req.body);
+  await passwordResetService.resetPassword(token, newPassword);
+  ok(res, { reset: true }, 200);
 });

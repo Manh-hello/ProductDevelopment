@@ -27,16 +27,12 @@ export default function LibraryPage() {
   const urlScope = scopeFromParams(params);
   const [tab, setTab] = useState<SetTab>(tabOfScope(urlScope));
 
-  // `?q=` (từ ô tìm ở header hoặc ô tìm trong trang) = tìm trên TOÀN BỘ thư viện, không giới hạn theo cấp độ/chủ đề.
-  const query = params.get('q')?.trim() ?? '';
-  const searching = query !== '';
-
   const ov = overview.data;
-  const scope: CatalogScope | null = ov ? (searching ? {} : (urlScope ?? defaultScope(ov, tab))) : null;
-  const key = scope ? (searching ? `q=${query}` : scopeToQuery(scope)) : '';
+  const scope: CatalogScope | null = ov ? urlScope ?? defaultScope(ov, tab) : null;
+  const key = scope ? scopeToQuery(scope) : '';
 
-  const [search, setSearch] = useState(query);
-  useEffect(() => setSearch(query), [query]);
+  const [search, setSearch] = useState('');
+  const [query, setQuery] = useState('');
   const [items, setItems] = useState<CatalogWord[]>([]);
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(0);
@@ -82,7 +78,8 @@ export default function LibraryPage() {
 
   const select = (s: CatalogScope) => {
     setSearch('');
-    setParams(scopeToQuery(s), { replace: true }); // chọn bộ từ → thoát chế độ tìm kiếm
+    setQuery('');
+    setParams(scopeToQuery(s), { replace: true });
   };
   const changeTab = (t: SetTab) => {
     setTab(t);
@@ -90,12 +87,7 @@ export default function LibraryPage() {
   };
   const onSearch = (e: FormEvent) => {
     e.preventDefault();
-    const q = search.trim();
-    setParams(q ? { q } : {}, { replace: true });
-  };
-  const clearSearch = () => {
-    setSearch('');
-    setParams({}, { replace: true });
+    setQuery(search.trim());
   };
 
   const addWord = async (w: CatalogWord) => {
@@ -120,61 +112,32 @@ export default function LibraryPage() {
       <div>
         <span className="font-label-sm uppercase tracking-wider text-primary font-bold">Kho từ chung</span>
         <h1 className="font-headline-xl text-headline-xl font-bold">Thư Viện Từ Vựng HSK</h1>
-        <p className="text-on-surface-variant font-body-md">
-          Duyệt từ theo cấp độ HSK, chủ đề hoặc trình độ. Thêm từng từ, hoặc học cả bộ để đưa vào lộ trình SRS.
-        </p>
+        <p className="text-on-surface-variant font-body-md">Duyệt từ theo cấp độ HSK, chủ đề hoặc trình độ. Thêm từng từ, hoặc học cả bộ để đưa vào lộ trình SRS.</p>
       </div>
 
       {overview.error && !ov && <ErrorBox message={overview.error} onRetry={overview.reload} />}
       {overview.loading && !ov && <p className="text-on-surface-variant font-body-md">Đang tải thư viện...</p>}
       {ov && ov.totalWords === 0 && (
-        <p className="text-on-surface-variant font-body-md">
-          Thư viện chưa có dữ liệu. Chạy <code>npm run prisma:seed</code> ở backend để nạp từ vựng HSK 1–3.
-        </p>
+        <p className="text-on-surface-variant font-body-md">Thư viện chưa có dữ liệu. Chạy <code>npm run prisma:seed</code> ở backend để nạp từ vựng HSK 1–3.</p>
       )}
 
       {ov && ov.totalWords > 0 && scope && (
         <>
-          {!searching && <SetPicker overview={ov} tab={tab} onTab={changeTab} scope={scope} onSelect={select} />}
+          <SetPicker overview={ov} tab={tab} onTab={changeTab} scope={scope} onSelect={select} />
 
           <div className="bg-surface-container-lowest rounded-2xl p-space-md sm:p-space-lg shadow-md flex flex-col gap-space-md">
             <div className="flex flex-wrap items-start justify-between gap-space-md">
               <div>
-                <h2 className="font-title-md font-bold text-on-surface">
-                  {searching ? `Kết quả cho "${query}"` : scopeLabel(scope)}
-                </h2>
-                <p className="font-label-md text-on-surface-variant">
-                  {total} từ{searching ? ' trong toàn bộ thư viện' : ''}
-                  {searching && (
-                    <button type="button" onClick={clearSearch} className="ml-2 text-primary font-bold">
-                      Xóa tìm kiếm
-                    </button>
-                  )}
-                </p>
+                <h2 className="font-title-md font-bold text-on-surface">{scopeLabel(scope)}</h2>
+                <p className="font-label-md text-on-surface-variant">{total} từ{query ? ` khớp "${query}"` : ''}</p>
               </div>
               <form onSubmit={onSearch} className="relative w-full sm:w-72">
-                <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]">
-                  search
-                </span>
-                <input
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  placeholder="Tìm trong toàn bộ thư viện: Hán tự, Pinyin, nghĩa..."
-                  className="w-full pl-10 pr-space-md py-2 rounded-lg bg-surface-container border-none text-on-surface placeholder:text-on-surface-variant font-body-sm focus:outline-none focus:ring-2 focus:ring-primary/20"
-                />
+                <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]">search</span>
+                <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Tìm Hán tự, Pinyin, nghĩa..." className="w-full pl-10 pr-space-md py-2 rounded-lg bg-surface-container border-none text-on-surface placeholder:text-on-surface-variant font-body-sm focus:outline-none focus:ring-2 focus:ring-primary/20" />
               </form>
             </div>
 
-            {!searching && (
-              <SetActions
-                scope={scope}
-                showAddAll
-                onChanged={() => {
-                  setReloadTick((t) => t + 1);
-                  overview.reload();
-                }}
-              />
-            )}
+            <SetActions scope={scope} showAddAll onChanged={() => { setReloadTick((t) => t + 1); overview.reload(); }} />
 
             {error && <ErrorBox message={error} onRetry={() => setReloadTick((t) => t + 1)} />}
 
@@ -183,46 +146,21 @@ export default function LibraryPage() {
                 <WordRow
                   key={w.id}
                   word={w}
-                  onAdded={(id) => {
-                    setItems((all) => all.map((x) => (x.id === id ? { ...x, inMyList: true } : x)));
-                    overview.reload();
-                  }}
+                  onAdded={(id) => { setItems((all) => all.map((x) => (x.id === id ? { ...x, inMyList: true } : x))); overview.reload(); }}
                   action={
                     w.inMyList ? (
-                      <Link
-                        to={`/vocabulary/${w.id}`}
-                        className="shrink-0 px-3 py-1.5 rounded-lg bg-secondary-container text-on-secondary-container font-label-md"
-                      >
-                        Đã có
-                      </Link>
+                      <Link to={`/vocabulary/${w.id}`} className="shrink-0 px-3 py-1.5 rounded-lg bg-secondary-container text-on-secondary-container font-label-md">Đã có</Link>
                     ) : (
-                      <button
-                        type="button"
-                        onClick={() => void addWord(w)}
-                        className="shrink-0 px-3 py-1.5 rounded-lg bg-primary-container text-on-primary font-label-md font-bold"
-                      >
-                        Thêm
-                      </button>
+                      <button type="button" onClick={() => void addWord(w)} className="shrink-0 px-3 py-1.5 rounded-lg bg-primary-container text-on-primary font-label-md font-bold">Thêm</button>
                     )
                   }
                 />
               ))}
-              {!loading && !error && items.length === 0 && (
-                <p className="text-center text-on-surface-variant font-body-md py-space-lg">
-                  {searching
-                    ? `Không tìm thấy "${query}" trong thư viện. Bạn có thể tự thêm từ mới.`
-                    : 'Không có từ nào khớp.'}
-                </p>
-              )}
+              {!loading && !error && items.length === 0 && <p className="text-center text-on-surface-variant font-body-md py-space-lg">Không có từ nào khớp.</p>}
             </div>
 
             {items.length < total && (
-              <button
-                type="button"
-                onClick={() => void loadMore()}
-                disabled={loading}
-                className="self-center px-space-lg py-2.5 rounded-lg bg-surface-container hover:bg-surface-container-high font-title-sm font-bold disabled:opacity-60"
-              >
+              <button type="button" onClick={() => void loadMore()} disabled={loading} className="self-center px-space-lg py-2.5 rounded-lg bg-surface-container hover:bg-surface-container-high font-title-sm font-bold disabled:opacity-60">
                 {loading ? 'Đang tải...' : `Xem thêm (${total - items.length} từ)`}
               </button>
             )}

@@ -1,4 +1,4 @@
-import { useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { ApiError } from '../lib/api';
 import { useAuth } from '../lib/auth';
 import { useEffect, useState } from 'react';
@@ -225,9 +225,11 @@ export default function AuthPage() {
                     <label className="font-label-md text-label-md text-on-surface font-semibold" htmlFor="password">
                       Mật khẩu
                     </label>
-                    <a className="font-label-md text-label-md text-primary hover:underline" href="javascript:void(0)">
-                      Quên mật khẩu?
-                    </a>
+                    {!reg && (
+                      <Link className="font-label-md text-label-md text-primary hover:underline" to="/forgot-password">
+                        Quên mật khẩu?
+                      </Link>
+                    )}
                   </div>
                   <div className="relative">
                     <span className="material-symbols-outlined absolute left-3 top-3 text-on-surface-variant text-xl pointer-events-none">

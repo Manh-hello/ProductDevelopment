@@ -1,14 +1,21 @@
 # API Documentation
 
 Base URL: `http://localhost:5000/api` — Response: `{ "success": true, "data": ... }` hoặc `{ "success": false, "message": "...", "errors": { field: [..] } }`.
-Trừ `register`, `login`, `health`, mọi API cần header `Authorization: Bearer <token>`.
+Trừ `register`, `login`, `forgot-password`, `reset-password`, `health` (và các API công khai của `/catalog`), mọi API cần header `Authorization: Bearer <token>`.
 
 ## Auth
 | Method | URL | Body | Ghi chú |
 |---|---|---|---|
 | POST | `/auth/register` | `{ name, email, password }` | 201 → `{ user, token }`; 409 nếu trùng email. `name` lưu vào `display_name` |
 | POST | `/auth/login` | `{ email, password }` | 200 → `{ user, token }`; 401 nếu sai |
+| POST | `/auth/forgot-password` | `{ email }` | Công khai. **Luôn** 200 `{ requested: true }` dù email có tồn tại hay không. 503 nếu máy chủ chưa cấu hình email; 429 nếu vượt giới hạn (5 lần/15 phút/IP) |
+| POST | `/auth/reset-password` | `{ token, newPassword }` | Công khai. 200 `{ reset: true }`. 400 `Liên kết đặt lại mật khẩu không hợp lệ hoặc đã hết hạn...` cho mọi token sai/hết hạn/đã dùng; 400 + `errors.newPassword` nếu mật khẩu không hợp lệ; 429 nếu vượt 10 lần/15 phút/IP |
 | GET | `/auth/me` | — | user hiện tại (`displayName, avatarUrl, dailyGoal, currentStreak, longestStreak, totalXp`) |
+
+### Quên mật khẩu
+1. `POST /auth/forgot-password` — nếu email tồn tại, server tạo token ngẫu nhiên 256 bit, **chỉ lưu SHA-256 của token** (`password_reset_tokens`), rồi gửi email chứa `FRONTEND_URL/reset-password#token=<token>` (token nằm trong fragment `#` để không lọt vào log server/Referer). Mỗi tài khoản tối đa 3 token/giờ (vượt thì im lặng bỏ qua, phản hồi vẫn như thường). Email gửi nền; lỗi SMTP chỉ được log (không log token/địa chỉ) và token tương ứng bị xoá.
+2. `POST /auth/reset-password` — token hiệu lực `PASSWORD_RESET_TOKEN_TTL_MINUTES` (mặc định 30 phút), dùng **một lần** (cập nhật nguyên tử `used_at`); thành công thì mọi token reset còn lại của tài khoản bị vô hiệu và `users.password_changed_at` được đặt: **mọi JWT cấp trước thời điểm đó bị từ chối (401 "Phiên đăng nhập đã hết hiệu lực")**. Mật khẩu mới dùng cùng quy tắc đăng ký (6–72 ký tự). Server không bao giờ gửi mật khẩu qua email.
+3. Lưu ý: `authenticateToken` giờ tra DB mỗi request để kiểm tra user còn tồn tại và `password_changed_at`; token của tài khoản đã xoá trả 401.
 
 ## Vocabularies
 | Method | URL | Ghi chú |
@@ -47,10 +54,25 @@ Trả về `{ input, inputType: "word"|"phrase", existing: { items, exactMatch }
 | DELETE | `/user-vocabularies/:vocabularyId` | |
 
 ## Practice (Mixing + Exercise + SM-2)
-1. `POST /practice/sessions` — `{ sessionType?: "mixed"|"daily_review"|"practice", sessionSize?: 1-50 }` → 201 `{ sessionId, sessionType, questions:[{ vocabularyId, exerciseId, exerciseType, hanzi, prompt, options[] }] }` (không lộ đáp án). 400 nếu chưa có từ nào.
-2. `POST /practice/sessions/:sessionId/answers` — `{ vocabularyId, exerciseId, exerciseType, selectedAnswer, responseTimeMs? }` → `{ attemptId, isCorrect, correctAnswer, xpAwarded, nextReviewAt, masteryLevel, status }`. Server ghi `exercise_attempts`, `srs_reviews`, cập nhật `user_vocabularies`, `xp_transactions`, `users.total_xp`, `daily_statistics`, streak, mở khoá thành tích.
-   - Tuỳ chọn `sentenceSource: "saved"`: chỉ lấy các từ bạn đã lưu câu (có `translation`) và dùng chính các câu đó làm câu nền cho `FILL_BLANK`, `SENTENCE_ORDER`, `TRANSLATION`, `TRANSLATION_HUB`. Ở chế độ thường, câu đã lưu cũng tham gia như câu ví dụ của từ. Tiến độ/SRS vẫn chỉ cập nhật qua `answers`.
-3. `PUT /practice/sessions/:sessionId/complete` — → `{ sessionId, totalQuestions, correctAnswers, xpEarned, completionBonus }` (+50 XP nếu `daily_review`). 409 nếu đã hoàn thành.
+1. `POST /practice/sessions` — `{ sessionType?: "mixed"|"daily_review"|"practice", sessionSize?: 1-50, exerciseTypes?: string[], sentenceSource?: "saved", scope?: { level?, topic?, band? } }` → 201 `{ sessionId, sessionType, composition, questions:[{ vocabularyId, exerciseId, exerciseType, inputMode, prompt, display, options[], tokens?, exampleId?, hint?, reveal? }] }` (không lộ đáp án; `reveal` chỉ có ở dạng tự chấm). 400 nếu chưa có từ nào.
+   - Server lưu **kế hoạch phiên** (`study_sessions.plan`: từ, loại bài, câu nền của từng câu hỏi).
+   - `sentenceSource: "saved"`: chỉ lấy các từ bạn đã lưu câu (có `translation`) và dùng chính các câu đó làm câu nền.
+   - **Fallback đúng loại bài:** nếu *mọi* loại bài được yêu cầu cần câu nền (`FILL_BLANK`, `SENTENCE_ORDER`, `TRANSLATION`, `TRANSLATION_HUB`) thì từ thiếu câu nền bị **bỏ** khỏi phiên (không còn hạ cấp âm thầm xuống `QUIZ`); nếu không còn câu nào → 400 nói rõ thiếu câu ví dụ. Phiên trộn nhiều loại (vd `/practice/multi`) vẫn hạ cấp từng câu xuống `QUIZ` và `exerciseType` phản ánh đúng loại thực tế.
+2. `POST /practice/sessions/:sessionId/answers` — `{ vocabularyId, exerciseType, selectedAnswer?, quality?, exampleId?, responseTimeMs? }` → `{ attemptId, isCorrect, correctAnswer, feedback, xpAwarded, quality, intervalDays, nextReviewAt, masteryLevel, status, currentStreak, newAchievements }`. Server ghi `exercise_attempts`, `srs_reviews`, cập nhật `user_vocabularies`, `xp_transactions`, `users.total_xp`, `daily_statistics`, streak, mở khoá thành tích.
+   - Từ chối: từ không thuộc phiên / sai `exerciseType` so với câu hỏi đã sinh (400); câu đã trả lời, phiên đã nhận đủ `totalQuestions`, hoặc phiên đã hoàn thành (409). Việc kiểm tra + ghi chạy trong một giao dịch có khoá phiên nên request song song không nhận XP/SRS hai lần. Phiên tạo trước khi có `plan` (cột null) vẫn dùng được, không kiểm tra kế hoạch.
+   - `exampleId` của client chỉ được dùng cho phiên cũ; phiên mới lấy câu nền từ `plan`.
+3. `PUT /practice/sessions/:sessionId/complete` — → `{ sessionId, totalQuestions, answeredQuestions, correctAnswers, accuracy, xpEarned, completionBonus, durationSeconds, newAchievements }` (+50 XP nếu `daily_review` có trả lời). 409 nếu đã hoàn thành (kể cả khi gọi song song: chỉ một request thắng).
+4. `GET /practice/sessions`, `GET /practice/sessions/:sessionId` — lịch sử / chi tiết phiên của CHÍNH bạn (404 với phiên người khác).
+
+### Dạng bài nào được chấm tự động?
+| `exerciseType` | Chấm | Ghi chú |
+|---|---|---|
+| `QUIZ`, `REVERSE_QUIZ`, `PINYIN`, `LISTENING`, `FILL_BLANK`, `TRANSLATION` | Tự động (so khớp đáp án chọn) | |
+| `DICTATION`, `SENTENCE_ORDER`, `TRANSLATION_HUB` | Tự động (so khớp chuỗi đã bỏ dấu câu; chính tả chấp nhận Pinyin) | Không chấm đồng nghĩa/ngữ pháp: câu đúng nghĩa nhưng khác từ ngữ vẫn bị tính sai |
+| `SENTENCE_CREATION` / `SENTENCE` | **Chỉ kiểm tra từ khoá**: câu phải chứa từ mục tiêu và dài hơn từ đó | **Không chấm ngữ pháp/ngữ nghĩa** |
+| `WRITING` | **Người học tự đánh giá** (`quality` 0–5) | Mô hình nhận diện (`/handwriting`) chỉ là tham khảo, không thay đổi `quality`/XP |
+| `SPEAKING` | **Người học tự đánh giá** (`quality`) | Nhận dạng giọng nói của trình duyệt chỉ hiển thị cho người học, không gửi lên server; server chưa chấm phát âm |
+| `FLASHCARD` | **Người học tự đánh giá** (Again/Hard/Good/Easy → `quality`) | |
 
 ## Dashboard
 | URL | Trả về |
@@ -97,3 +119,31 @@ Phạm vi một "bộ từ": `level` (`HSK 1`…`HSK 6`, chấp nhận cả `HSK
 
 `POST /practice/sessions` nhận thêm `scope: { level?, topic?, band? }` → chỉ luyện các từ **trong danh sách học của bạn** thuộc bộ đó (ưu tiên đến hạn ôn → từ yếu → từ mới). 400 nếu bạn chưa thêm từ nào của bộ. `sentenceSource: "saved"` được ưu tiên hơn `scope`.
 
+
+## Handwriting — nhận diện chữ viết (cần xác thực)
+Model nhận diện **một chữ Hán mỗi ảnh** (347 chữ trong `classes.json`). Backend gọi dịch vụ model qua adapter (xem `docs/handwriting-model.md`). **Model không có phân tích nét/thứ tự nét** nên API **không** trả lỗi/gợi ý sửa (`analysis` luôn `null`, `analysisSupported: false`).
+
+| Method | URL | Ghi chú |
+|---|---|---|
+| GET | `/handwriting/status` | → `{ configured, available, provider, minConfidence, maxImageBytes, acceptedMimeTypes, analysisSupported }`. `configured=false` khi chưa đặt `HANDWRITING_SERVICE_URL`; `available=false` khi dịch vụ không phản hồi |
+| POST | `/handwriting/recognize?vocabularyId=<uuid>` | Body = **bytes ảnh thô** (không multipart/base64), header `Content-Type: image/png`\|`image/jpeg`\|`image/webp`. `vocabularyId` tuỳ chọn, phải thuộc danh sách học của bạn |
+| GET | `/handwriting/attempts?limit=20` | Lịch sử nhận diện của bạn (không có ảnh) |
+
+`POST /handwriting/recognize` → 200:
+```json
+{
+  "attemptId": "…",
+  "status": "recognized | low_confidence | unrecognized | no_content",
+  "message": "hướng dẫn hiển thị cho người học (kể cả cách thử lại)",
+  "predicted": { "char": "你", "confidence": 0.93 },
+  "candidates": [{ "char": "你", "confidence": 0.93 }, { "char": "尔", "confidence": 0.02 }],
+  "minConfidence": 0.5,
+  "match": { "targetChars": ["学","校"], "unsupportedChars": ["校"], "matchesTarget": false },
+  "analysis": null,
+  "analysisSupported": false
+}
+```
+- `status`: `recognized` (độ tin cậy ≥ `HANDWRITING_MIN_CONFIDENCE`), `low_confidence` (dưới ngưỡng — vẫn có `predicted` nhưng cần thử lại), `unrecognized` (không có dự đoán), `no_content` (ảnh trống, không có nét chữ; `predicted = null`).
+- `match` chỉ có khi gửi `vocabularyId`: `matchesTarget` = chữ dự đoán có nằm trong các chữ của từ; `unsupportedChars` = chữ của từ mà model **không** nhận diện được (ngoài 347 chữ).
+- Lỗi: 400 (body rỗng, ảnh hỏng/không khớp chữ ký tệp), 401, 404 (`vocabularyId` không thuộc bạn), 413 (vượt `HANDWRITING_MAX_IMAGE_BYTES`, mặc định 2 MB), 415 (không phải PNG/JPEG/WebP), 422 (dịch vụ không đọc được ảnh), 429 (20 lần/phút/user), 503 (chưa cấu hình hoặc dịch vụ model không khả dụng — **không** trả kết quả giả).
+- **Ảnh không được lưu** (không ghi đĩa, không ghi DB, không log). `handwriting_attempts` chỉ giữ trạng thái, chữ dự đoán, độ tin cậy, `matches_target`.
